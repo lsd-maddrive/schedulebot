@@ -1,7 +1,7 @@
 #* Variables
 SHELL := /usr/bin/env bash
 PYTHON := python
-
+OS := $(shell uname -o)
 
 
 #* Poetry
@@ -16,6 +16,12 @@ poetry-remove:
 #* Installation
 .PHONY: install
 install: poetry-install tools-install
+ifeq ($(OS),GNU/Linux)
+	chmod +x ./git_hook/git-hook.sh
+	./git_hook/git-hook.sh
+else
+	git_hook\git-hook.bat
+endif
 
 .PHONY: poetry-install
 poetry-install:
@@ -32,7 +38,7 @@ poetry-export-dev:
 .PHONY: tools-install
 tools-install:
 	poetry run pre-commit install --hook-type prepare-commit-msg --hook-type pre-commit
-	# poetry run nbdime config-git --enable
+	poetry run nbdime config-git --enable
 
 #* Notebooks
 .PHONY: nbextention-toc-install
