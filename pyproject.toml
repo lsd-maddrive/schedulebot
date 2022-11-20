@@ -32,6 +32,8 @@ python = "^3.8.0"
 typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.7.0"
 numpy = "^1.23.3"
+seaborn = "^0.12.1"
+scipy = "^1.9.3"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^21.7b0", allow-prereleases = true}
