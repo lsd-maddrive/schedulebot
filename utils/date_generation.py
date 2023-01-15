@@ -6,8 +6,5 @@ def get_date_string() -> str:
     Arguments:
         [None]
     Returns:
-        [str] -- Возвращает текущую дату в формате Год-Месяц-День"""
+        [str] -- Returns the current date in Year-Month-Day format"""
     return date.today().strftime("%Y-%m-%d")
-
-
-print(get_date_string())
