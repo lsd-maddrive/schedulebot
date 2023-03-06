@@ -5,8 +5,8 @@ metadata = MetaData()
 Model = declarative_base(metadata=metadata)
 
 
-class qualification(Model):
-    """Table with model qualification"""
+class Qualification(Model):
+    """Table with values/types qualification"""
 
     __tablename__ = "qualification"
 
