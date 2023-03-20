@@ -5,7 +5,7 @@ import sqlalchemy as sql
 from dotenv import load_dotenv
 
 
-class DatabaseClient():
+class DatabaseClient:
     key = 'DB_DPATH'
 
     def __init__(self):
