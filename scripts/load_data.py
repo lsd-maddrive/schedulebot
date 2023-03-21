@@ -1,7 +1,7 @@
 import logging
 import os
 
-# import click
+import click
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
@@ -11,10 +11,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
 
 
-# @click.command()
-# @click.option("--version", required=True, help="The name of the data folder.")
-
-
+@click.command()
+@click.option("--version", required=True, help="The name of the data folder.")
 def main(version: str):
     CURRENT_DPATH = os.path.dirname(os.path.abspath(__file__))
     PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DPATH, os.pardir))
@@ -32,4 +30,5 @@ def main(version: str):
 
 
 if __name__ == "__main__":
-    main('2023-02-26')
+    main()
+# run python3 scripts\load_data.py --version 2023-02-26
