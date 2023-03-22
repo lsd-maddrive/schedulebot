@@ -27,6 +27,3 @@ class DatabaseClient():
         with self._engine.begin() as connection:
             metadata.create_all(self._engine)
             df.to_sql(name=table_name, con=connection, if_exists='append', index=False)
-
-# result = connection.execute('SELECT * FROM tablename;')
-# connection.execute("SELECT * FROM users").fetchall()
