@@ -9,6 +9,7 @@ from schedulebot.db.models import metadata
 
 
 class DatabaseClient():
+    """Class create a path and engine to put SQL data in folder"""
     key = 'DB_DPATH'
 
     def __init__(self):
