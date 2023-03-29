@@ -6,10 +6,8 @@ import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification  # , Weekdays
+from schedulebot.db.models import Qualification
 from schedulebot.utils.data import parse_subject_name
-
-# from schedulebot.utils.load import weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -21,8 +19,8 @@ DATA_DPATH = os.path.join(PROJECT_ROOT, "data")
 @click.command()
 @click.option("--version", required=True, help="The name of the data folder.")
 def main(version: str):
-    data_version = version
-    src_dpath = os.path.join(DATA_DPATH, data_version)
+    src_dpath = os.path.join(DATA_DPATH, version)
+
     fpath = os.path.join(src_dpath, "Teachers+Lessons.csv")
     dataframe = pd.read_csv(fpath, usecols=['TEACHERS'])
 
@@ -32,12 +30,11 @@ def main(version: str):
     dataframe['name'] = parsed_teachers_name[:, 0]
     dataframe['qualification'] = parsed_teachers_name[:, 1]
 
-    df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
     db_client = DatabaseClient()
-    db_client.add_df(df=df, table_name=Qualification.__tablename__)
 
-#    data_weekdays = DatabaseClient()
-#    data_weekdays.add_df(df=weekdays(), table_name=Weekdays.__tablename__)
+    # --- Qualifications --- #
+    df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    db_client.add_df(df=df, table_name=Qualification.__tablename__)
 
 
 if __name__ == "__main__":
