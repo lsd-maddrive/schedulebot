@@ -19,8 +19,8 @@ DATA_DPATH = os.path.join(PROJECT_ROOT, "data")
 @click.command()
 @click.option("--version", required=True, help="The name of the data folder.")
 def main(version: str):
-    src_dpath = os.path.join(DATA_DPATH, version)
-
+    data_version = version
+    src_dpath = os.path.join(DATA_DPATH, data_version)
     fpath = os.path.join(src_dpath, "Teachers+Lessons.csv")
     dataframe = pd.read_csv(fpath, usecols=['TEACHERS'])
 
@@ -30,10 +30,8 @@ def main(version: str):
     dataframe['name'] = parsed_teachers_name[:, 0]
     dataframe['qualification'] = parsed_teachers_name[:, 1]
 
-    db_client = DatabaseClient()
-
-    # --- Qualifications --- #
     df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    db_client = DatabaseClient()
     db_client.add_df(df=df, table_name=Qualification.__tablename__)
 
 
