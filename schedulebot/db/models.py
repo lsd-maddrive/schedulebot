@@ -15,3 +15,12 @@ class Qualification(Model):
 
     def __repr__(self):
         return(f"<Qualification(id={self.id}, name={self.name})>")
+
+
+class Weekdays(Model):
+    """Table with the days from Monday to Saturday"""
+
+    __tablename__ = "weekday"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30), nullable=False)
