@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6080570de87d01dcbce73fa2701c734d238c8f528f7e1c0e0557f782d309700c
-size 1167
+,TEACHERS,TEACHERS_HOURS_ONE_WEEK,TEACHERS_HOURS_TWO_WEEKS,TEACHERS_HOURS_ALL
+0,Дикун И.А. professor,2.0,4.0,36.0
+1,Козлова Л.П. professor,5.0,10.0,90.0
+2,Королев В.В. professor,4.0,8.0,72.0
+3,Кузнецов В.Е. professor,5.0,10.0,90.0
+4,Якупов О.Э. assistant,4.0,8.0,72.0
+5,Буканин В.А. professor,2.0,4.0,36.0
+6,Демидович О.В. professor,1.0,2.0,18.0
+7,Овдиенко Е.Н. assistant,1.0,2.0,18.0
+8,Трусов А.А. assistant,2.0,4.0,36.0
+9,Трусов А.О. professor,2.0,4.0,36.0
+10,Леута А.А. professor,2.0,4.0,36.0
+11,Мирошников А.Н. professor,2.0,4.0,36.0
+12,Амбросовская Е.Б. professor,5.0,10.0,90.0
+13,Лукичев А.Н. professor,2.0,4.0,36.0
+14,Михайлов Д.П. assistant,2.0,4.0,36.0
+15,Копычев М.М. professor,1.5,3.0,27.0
+16,Игнатович Ю.В. assistant,1.5,3.0,27.0
+17,Скороходов Д.А. professor,2.0,4.0,36.0
+18,Вейнмейстер А.В. professor,2.0,4.0,36.0
+19,Филатова Е.С. professor,1.5,3.0,27.0
+20,Богданова С.М. assistant,1.5,3.0,27.0
+21,Федоркова А.О. assistant,2.0,4.0,36.0

@@ -31,15 +31,15 @@ def main(version: str):
     dataframe['name'] = parsed_teachers_name[:, 0]
     dataframe['qualification'] = parsed_teachers_name[:, 1]
 
-    df_client = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
-
     db_client = DatabaseClient()
-    db_client.add_df(df=df_client, table_name=Qualification.__tablename__)
 
-    df_weekdays = pd.DataFrame(weekdays(), columns=['name'])
+    # --- Qualification --- #
+    qualification_df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    db_client.add_df(df=qualification_df, table_name=Qualification.__tablename__)
 
-    db_weekdays = DatabaseClient()
-    db_weekdays.add_df(df=df_weekdays, table_name=Weekdays.__tablename__)
+    # --- Days --- #
+    weekdays_ds = pd.Series(weekdays(), name="name")
+    db_client.add_df(df=weekdays_ds, table_name=Weekdays.__tablename__)
 
 
 if __name__ == "__main__":
