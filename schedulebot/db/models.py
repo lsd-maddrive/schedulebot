@@ -20,7 +20,16 @@ class Qualification(Model):
 class Weekdays(Model):
     """Table with the days from Monday to Saturday"""
 
-    __tablename__ = "weekdays"
+    __tablename__ = "weekday"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
+
+
+class Time_interval(Model):
+    """Table with time interval"""
+
+    __tablename__ = "time_interval"
+
+    id = Column(Integer, primary_key=True)
+    interval = Column(String(30), nullable=False)
