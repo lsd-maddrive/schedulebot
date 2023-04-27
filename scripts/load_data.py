@@ -32,10 +32,10 @@ def main(version: str):
     dataframe['qualification'] = parsed_teachers_name[:, 1]
 
     df_client = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    df_time_interval = pd.DataFrame(get_time_intervals(), columns=['interval'])
 
     db_client = DatabaseClient()
     db_client.add_df(df=df_client, table_name=Qualification.__tablename__)
-    df_time_interval = get_time_intervals()
     db_client.add_df(df=df_time_interval, table_name=Time_interval.__tablename__)
 
 
