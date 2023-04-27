@@ -27,6 +27,7 @@ class Weekdays(Model):
 
 
 class Time_interval(Model):
+
     """Table with time intervals"""
 
     __tablename__ = "time_intervals"

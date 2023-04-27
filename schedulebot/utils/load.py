@@ -1,13 +1,12 @@
-import pandas as pd
+from typing import List
 
 
-def weekdays():
+def weekdays() -> List[str]:
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    df = pd.DataFrame(weekdays)
-    return (df)
+    return weekdays
 
 
-def get_time_intervals():
+def get_time_intervals() -> List[str]:
     """The function should return a list of lines with learning intervals"""
 
     time_intervals = ['8:00 - 9:30',
