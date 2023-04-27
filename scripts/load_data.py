@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Time_interval
+from schedulebot.db.models import Qualification, Time_interval, Weekdays
 from schedulebot.utils.data import parse_subject_name
-from schedulebot.utils.load import get_time_intervals
+from schedulebot.utils.load import get_time_intervals, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -31,12 +31,19 @@ def main(version: str):
     dataframe['name'] = parsed_teachers_name[:, 0]
     dataframe['qualification'] = parsed_teachers_name[:, 1]
 
-    df_client = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
-    df_time_interval = pd.DataFrame(get_time_intervals(), columns=['interval'])
-
     db_client = DatabaseClient()
-    db_client.add_df(df=df_client, table_name=Qualification.__tablename__)
-    db_client.add_df(df=df_time_interval, table_name=Time_interval.__tablename__)
+
+    # --- Qualification --- #
+    qualification_df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    db_client.add_df(df=qualification_df, table_name=Qualification.__tablename__)
+
+    # --- Days --- #
+    weekdays_ds = pd.Series(weekdays(), name="name")
+    db_client.add_df(df=weekdays_ds, table_name=Weekdays.__tablename__)
+
+    # --- Time interval --- #
+    time_interval_df = pd.DataFrame(get_time_intervals(), columns=['interval'])
+    db_client.add_df(df=time_interval_df, table_name=Time_interval.__tablename__)
 
 
 if __name__ == "__main__":

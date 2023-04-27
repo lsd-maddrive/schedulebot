@@ -29,7 +29,7 @@ class Weekdays(Model):
 class Time_interval(Model):
     """Table with time intervals"""
 
-    __tablename__ = "time_intervals"
+    __tablename__ = "time_interval"
 
     id = Column(Integer, primary_key=True)
     interval = Column(String(30), nullable=False)
@@ -41,5 +41,5 @@ class Study_interval(Model):
     __tablename__ = "study_interval"
 
     id = Column(Integer, primary_key=True)
-    time_interval_id = Column(String(30), ForeignKey('time_intervals.interval'))
+    time_interval_id = Column(String(30), ForeignKey('time_interval.id'))
     day_id = Column(Integer(), ForeignKey('weekday.id'))
