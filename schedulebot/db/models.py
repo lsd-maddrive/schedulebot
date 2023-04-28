@@ -27,9 +27,10 @@ class Weekdays(Model):
 
 
 class Time_interval(Model):
-    """Table with time interval"""
 
-    __tablename__ = "time_interval"
+    """Table with time intervals"""
+
+    __tablename__ = "time_intervals"
 
     id = Column(Integer, primary_key=True)
     interval = Column(String(30), nullable=False)
