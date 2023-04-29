@@ -41,5 +41,5 @@ class Study_interval(Model):
     __tablename__ = "study_interval"
 
     id = Column(Integer, primary_key=True)
-    time_interval_id = Column(String(30), ForeignKey('time_interval.id'))
-    day_id = Column(Integer(), ForeignKey('weekday.id'))
+    time_interval_id = Column(ForeignKey('time_interval.id'))
+    day_id = Column(ForeignKey('weekday.id'))
