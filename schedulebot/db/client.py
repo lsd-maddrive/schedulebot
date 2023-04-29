@@ -1,3 +1,5 @@
+from typing import List
+
 import logging
 import os
 
@@ -6,7 +8,7 @@ import sqlalchemy as sql
 from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 
-from schedulebot.db.models import metadata
+from schedulebot.db.models import Study_interval, metadata
 
 
 class DatabaseClient():
@@ -47,3 +49,13 @@ class DatabaseClient():
         """
         with self._engine.begin() as connection:
             df.to_sql(name=table_name, con=connection, if_exists=if_exist, index=False)
+
+    def get_id_list(self, table) -> List[int]:
+        with self._session() as session:
+            ids = [val[0] for val in session.query(table.id).distinct()]
+        return ids
+
+    def add_record(self, record):
+        with self._session() as session:
+            session.add(Study_interval(time_interval_id=record[0], day_id=record[1]))
+            session.commit()

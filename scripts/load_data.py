@@ -45,6 +45,17 @@ def main(version: str):
     time_interval_df = pd.DataFrame(get_time_intervals(), columns=['interval'])
     db_client.add_df(df=time_interval_df, table_name=Time_interval.__tablename__)
 
+    # --- Study interval --- #
+    studydays = db_client.get_id_list(Weekdays)
+    studytime = db_client.get_id_list(Time_interval)
+    studyweek = []
+    for day in studydays:
+        for time in studytime:
+            studyweek.append(studydays[day - 1])
+            studyweek.append(studytime[time - 1])
+            db_client.add_record(studyweek)
+            studyweek = []
+
 
 if __name__ == "__main__":
     main()
