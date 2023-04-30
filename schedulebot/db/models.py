@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, MetaData, String
+from sqlalchemy import Column, ForeignKey, Integer, MetaData, String
 from sqlalchemy.ext.declarative import declarative_base
 
 metadata = MetaData()
@@ -27,10 +27,19 @@ class Weekdays(Model):
 
 
 class Time_interval(Model):
-
     """Table with time intervals"""
 
-    __tablename__ = "time_intervals"
+    __tablename__ = "time_interval"
 
     id = Column(Integer, primary_key=True)
     interval = Column(String(30), nullable=False)
+
+
+class Study_interval(Model):
+    """Table with study interval"""
+
+    __tablename__ = "study_interval"
+
+    id = Column(Integer, primary_key=True)
+    time_interval_id = Column(ForeignKey('time_interval.id'))
+    day_id = Column(ForeignKey('weekday.id'))

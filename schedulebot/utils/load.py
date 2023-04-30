@@ -2,8 +2,10 @@ from typing import List
 
 
 def weekdays() -> List[str]:
+    """The function should return a list of lines with weekdays"""
+
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    return weekdays
+    return (weekdays)
 
 
 def get_time_intervals() -> List[str]:
