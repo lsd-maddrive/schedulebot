@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, MetaData, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, MetaData, String
 from sqlalchemy.ext.declarative import declarative_base
 
 metadata = MetaData()
@@ -43,3 +43,16 @@ class Study_interval(Model):
     id = Column(Integer, primary_key=True)
     time_interval_id = Column(ForeignKey('time_interval.id'))
     day_id = Column(ForeignKey('weekday.id'))
+
+
+class Teacher(Model):
+    """Table with names of teachers and load hours"""
+
+    __tablename__ = "teachers"
+
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(30), nullable=False)
+    middle_name = Column(String(30), nullable=False)
+    last_name = Column(String(30), nullable=False)
+    load_hours = Column(Float, nullable=False)
+    qualification_id = Column(ForeignKey('qualification.id'))
