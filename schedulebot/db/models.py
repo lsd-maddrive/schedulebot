@@ -56,3 +56,12 @@ class Teacher(Model):
     last_name = Column(String(30), nullable=False)
     load_hours = Column(Float, nullable=False)
     qualification_id = Column(ForeignKey('qualification.id'))
+
+
+class Subject(Model):
+    """Table with subjects"""
+
+    __tablename__ = "study_interval"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30), nullable=False)
