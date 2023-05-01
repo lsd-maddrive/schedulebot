@@ -8,7 +8,7 @@ import sqlalchemy as sql
 from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 
-from schedulebot.db.models import Study_interval, metadata
+from schedulebot.db.models import metadata
 
 
 class DatabaseClient():
@@ -57,5 +57,5 @@ class DatabaseClient():
 
     def add_record(self, record):
         with self._session() as session:
-            session.add(Study_interval(time_interval_id=record[0], day_id=record[1]))
+            session.add(record)
             session.commit()

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, MetaData, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, MetaData, String
 from sqlalchemy.ext.declarative import declarative_base
 
 metadata = MetaData()
@@ -54,5 +54,5 @@ class Teacher(Model):
     first_name = Column(String(30), nullable=False)
     middle_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
-    load_hours = Column(Integer, nullable=False)
+    load_hours = Column(Float, nullable=False)
     qualification_id = Column(ForeignKey('qualification.id'))
