@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Time_interval, Weekdays
+from schedulebot.db.models import Qualification, Study_interval, Time_interval, Weekdays
 from schedulebot.utils.data import parse_subject_name
 from schedulebot.utils.load import get_time_intervals, weekdays
 
@@ -44,6 +44,14 @@ def main(version: str):
     # --- Time interval --- #
     time_interval_df = pd.DataFrame(get_time_intervals(), columns=['interval'])
     db_client.add_df(df=time_interval_df, table_name=Time_interval.__tablename__)
+
+    # --- Study interval --- #
+    studydays = db_client.get_id_list(Weekdays)
+    studytime = db_client.get_id_list(Time_interval)
+    for day in studydays:
+        for time in studytime:
+            record = Study_interval(time_interval_id=time, day_id=day)
+            db_client.add_record(record)
 
 
 if __name__ == "__main__":

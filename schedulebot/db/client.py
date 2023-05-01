@@ -1,3 +1,5 @@
+from typing import List
+
 import logging
 import os
 
@@ -47,3 +49,13 @@ class DatabaseClient():
         """
         with self._engine.begin() as connection:
             df.to_sql(name=table_name, con=connection, if_exists=if_exist, index=False)
+
+    def get_id_list(self, table) -> List[int]:
+        with self._session() as session:
+            ids = [val[0] for val in session.query(table.id).distinct()]
+        return ids
+
+    def add_record(self, record):
+        with self._session() as session:
+            session.add(record)
+            session.commit()
