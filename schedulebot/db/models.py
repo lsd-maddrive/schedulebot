@@ -51,8 +51,8 @@ class Teacher(Model):
     __tablename__ = "teachers"
 
     id = Column(Integer, primary_key=True)
-    first_name = Column(String(30), nullable=False)
     middle_name = Column(String(30), nullable=False)
+    first_name = Column(String(30), nullable=False)
     last_name = Column(String(30), nullable=False)
     load_hours = Column(Float, nullable=False)
     qualification_id = Column(ForeignKey('qualification.id'))
