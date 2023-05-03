@@ -8,7 +8,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import Qualification, Study_interval, Teacher, Time_interval, Weekdays
 from schedulebot.utils.data import parse_subject_name
-from schedulebot.utils.load import get_time_intervals, split_name, weekdays
+from schedulebot.utils.load import get_time_intervals, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -23,7 +23,7 @@ def main(version: str):
     data_version = version
     src_dpath = os.path.join(DATA_DPATH, data_version)
     fpath = os.path.join(src_dpath, "Teachers+Lessons.csv")
-    dataframe = pd.read_csv(fpath, usecols=['TEACHERS'])
+    dataframe = pd.read_csv(fpath)
 
     parsed_teachers_name = dataframe['TEACHERS'].apply(parse_subject_name).tolist()
     parsed_teachers_name = np.array(parsed_teachers_name).reshape(-1, 2)
@@ -54,50 +54,19 @@ def main(version: str):
             db_client.add_record(record)
 
     # --- Teachers --- #
-    FULL_TEACHERS_NAME = ['Дикун Ирина Александровна', 'Козлова Людмила Петровна',
-                          'Королев Виталий Вячеславович', 'Кузнецов Владимир Евгеньевич',
-                          'Якупов Олег Эльдусович', 'Буканин Владимир Анатольевич',
-                          'Демидович Ольга Васильевна', 'Овдиенко Евгений Николаевич',
-                          'Трусов Александр Александрович', 'Трусов Александр Олегович',
-                          'Леута Алексей Александрович', 'Мирошников Александр Николаевич',
-                          'Амбросовская Елена Борисовна', 'Лукичев Андрей Николаевич',
-                          'Михайлов Данил Павлович', 'Копычев Михаил Михайлович',
-                          'Игнатович Юлия Васильевна', 'Скороходов Дмитрий Алексеевич',
-                          'Вейнмейстер Андрей Викторович', 'Филатова Екатерина Сергеевна',
-                          'Богданова Светлана Михайловна', 'Федоркова Анастасия Олеговна',
-                          'Гречухин Михаил Николаевич']
-    splited_names = split_name(FULL_TEACHERS_NAME)
+    full_teachers_names = dataframe['TEACHERS'].tolist()
+    lessons_one_week = dataframe['TEACHERS_LESSONS_ONE_WEEK'].tolist()
 
-    first_name = splited_names[1]
-    middle_name = splited_names[0]
-    last_name = splited_names[2]
-    lessons_one_week = pd.read_csv(fpath, usecols=['TEACHERS_LESSONS_ONE_WEEK'])
-    lessons_one_week = lessons_one_week['TEACHERS_LESSONS_ONE_WEEK'].tolist()
-
-    qualification_id = []
     i = 0
-    while i < len(dataframe['qualification']):
-        if dataframe.iloc[i, 2] == "professor":
-            qualification_id.append(1)
-        elif dataframe.iloc[i, 2] == "assistant":
-            qualification_id.append(2)
-        i += 1
-    cash = []
-    i = 0
-    while i < len(first_name):
-        cash.append(first_name[i])
-        cash.append(middle_name[i])
-        cash.append(last_name[i])
-        cash.append(lessons_one_week[i])
-        cash.append(qualification_id[i])
-        record = Teacher(first_name=cash[0],
-                         middle_name=cash[1],
+    while i < len(full_teachers_names):
+        cash = full_teachers_names[i].split()
+        record = Teacher(middle_name=cash[0],
+                         first_name=cash[1],
                          last_name=cash[2],
-                         load_hours=cash[3],
-                         qualification_id=cash[4])
+                         qualification_id=cash[3],
+                         load_hours=lessons_one_week[i])
         db_client.add_record(record)
         i += 1
-        cash = []
 
 
 if __name__ == "__main__":
