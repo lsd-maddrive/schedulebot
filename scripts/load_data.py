@@ -83,10 +83,10 @@ def main(version: str):
     db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
-    teachers = db_client.get_id_list(Weekdays)
-    subjects = db_client.get_id_list(Time_interval)
-    for x in teachers:
-        record = Teacher_subject(teacher_id=time, subject_id=day)
+    teachers = db_client.get_id_list(Teacher)
+    subjects = db_client.get_id_list(Subject)
+    for x, y in zip(teachers, subjects):
+        record = Teacher_subject(teacher_id=x, subject_id=y)
         db_client.add_record(record)
 
 
