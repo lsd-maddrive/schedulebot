@@ -2,12 +2,10 @@ import logging
 import os
 
 import click
-import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import Qualification, Study_interval, Subject, Teacher, Time_interval, Weekdays
-from schedulebot.utils.data import parse_subject_name
 from schedulebot.utils.load import get_time_intervals, weekdays
 
 logging.basicConfig(level=logging.INFO)
@@ -25,16 +23,11 @@ def main(version: str):
     fpath = os.path.join(src_dpath, "Teachers+Lessons.csv")
     dataframe = pd.read_csv(fpath)
 
-    parsed_teachers_name = dataframe['TEACHERS'].apply(parse_subject_name).tolist()
-    parsed_teachers_name = np.array(parsed_teachers_name).reshape(-1, 2)
-
-    dataframe['name'] = parsed_teachers_name[:, 0]
-    dataframe['qualification'] = parsed_teachers_name[:, 1]
-
     db_client = DatabaseClient()
 
     # --- Qualification --- #
-    qualification_df = pd.DataFrame(dataframe['qualification'].unique(), columns=['name'])
+    qualification_data = dataframe["TEACHERS"].str.split().str[-1].unique()
+    qualification_df = pd.DataFrame(qualification_data, columns=['name'])
     db_client.add_df(df=qualification_df, table_name=Qualification.__tablename__)
 
     # --- Days --- #
@@ -57,16 +50,15 @@ def main(version: str):
     full_teachers_names = dataframe['TEACHERS'].tolist()
     lessons_one_week = dataframe['TEACHERS_LESSONS_ONE_WEEK'].tolist()
 
-    i = 0
-    while i < len(full_teachers_names):
-        cash = full_teachers_names[i].split()
-        record = Teacher(middle_name=cash[0],
-                         first_name=cash[1],
-                         last_name=cash[2],
-                         qualification_id=cash[3],
-                         load_hours=lessons_one_week[i])
+    for teacher_info, teacher_load in zip(full_teachers_names, lessons_one_week):
+        last_name, first_name, middle_name, qualification = teacher_info.split()
+        quality_id = db_client.get_id(Qualification, Qualification.name, qualification)[0]
+        record = Teacher(middle_name=middle_name,
+                         first_name=first_name,
+                         last_name=last_name,
+                         qualification_id=quality_id,
+                         load_hours=teacher_load)
         db_client.add_record(record)
-        i += 1
 
     # --- Subject --- #
     fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
