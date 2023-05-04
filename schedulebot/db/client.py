@@ -59,3 +59,8 @@ class DatabaseClient():
         with self._session() as session:
             session.add(record)
             session.commit()
+
+    def get_id(self, table, column, quality) -> List[int]:
+        with self._session() as session:
+            x = [val[0] for val in session.query(table.id).filter(column == quality).all()]
+        return x
