@@ -65,3 +65,13 @@ class Subject(Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
+
+
+class Teacher_subject(Model):
+    """Table with teachers subjects"""
+
+    __tablename__ = "teachers_subjects"
+
+    id = Column(Integer, primary_key=True)
+    teacher_id = Column(ForeignKey("teachers.id"))
+    subject_id = Column(ForeignKey("subjects.id"))
