@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Study_interval, Teacher, Time_interval, Weekdays
+from schedulebot.db.models import Qualification, Study_interval, Subject, Teacher, Time_interval, Weekdays
 from schedulebot.utils.data import parse_subject_name
 from schedulebot.utils.load import get_time_intervals, weekdays
 
@@ -67,6 +67,12 @@ def main(version: str):
                          load_hours=lessons_one_week[i])
         db_client.add_record(record)
         i += 1
+
+    # --- Subject --- #
+    fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
+    subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
+    subject_df['name'] = subject_df
+    db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
 
 
 if __name__ == "__main__":
