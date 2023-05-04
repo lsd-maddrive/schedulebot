@@ -61,7 +61,7 @@ class Teacher(Model):
 class Subject(Model):
     """Table with subjects"""
 
-    __tablename__ = "subject"
+    __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
