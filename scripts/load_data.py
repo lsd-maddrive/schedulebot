@@ -6,7 +6,15 @@ import numpy as np
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Study_interval, Subject, Teacher, Time_interval, Weekdays
+from schedulebot.db.models import (
+    Qualification,
+    Study_interval,
+    Subject,
+    Teacher,
+    Teacher_subject,
+    Time_interval,
+    Weekdays,
+)
 from schedulebot.utils.data import parse_subject_name
 from schedulebot.utils.load import get_time_intervals, weekdays
 
@@ -46,10 +54,10 @@ def main(version: str):
     db_client.add_df(df=time_interval_df, table_name=Time_interval.__tablename__)
 
     # --- Study interval --- #
-    studydays = db_client.get_id_list(Weekdays)
-    studytime = db_client.get_id_list(Time_interval)
-    for day in studydays:
-        for time in studytime:
+    teachers = db_client.get_id_list(Weekdays)
+    subjects = db_client.get_id_list(Time_interval)
+    for day in teachers:
+        for time in subjects:
             record = Study_interval(time_interval_id=time, day_id=day)
             db_client.add_record(record)
 
@@ -73,6 +81,13 @@ def main(version: str):
     subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
     subject_df['name'] = subject_df
     db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
+
+    # --- Teacher subject --- #
+    teachers = db_client.get_id_list(Weekdays)
+    subjects = db_client.get_id_list(Time_interval)
+    for x in teachers:
+        record = Teacher_subject(teacher_id=time, subject_id=day)
+        db_client.add_record(record)
 
 
 if __name__ == "__main__":
