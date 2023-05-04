@@ -75,6 +75,8 @@ def main(version: str):
     db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
+    # subject_teachers_df = pd.read_csv(fpath_sub)
+
     teachers = db_client.get_id_list(Teacher)
     subjects = db_client.get_id_list(Subject)
     for x, y in zip(teachers, subjects):
