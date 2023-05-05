@@ -63,8 +63,8 @@ def main(version: str):
     # --- Subject --- #
     fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
     subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
-    subject_df['name'] = subject_df
-    db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
+    subject_ds = pd.Series(subject_df["subjects"], name="name")
+    db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
 
 if __name__ == "__main__":
