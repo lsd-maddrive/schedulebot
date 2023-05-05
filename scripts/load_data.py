@@ -5,7 +5,7 @@ import click
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Study_interval, Teacher, Time_interval, Weekdays
+from schedulebot.db.models import Qualification, Study_interval, Subject, Teacher, Time_interval, Weekdays
 from schedulebot.utils.load import get_time_intervals, weekdays
 
 logging.basicConfig(level=logging.INFO)
@@ -59,6 +59,12 @@ def main(version: str):
                          qualification_id=quality_id,
                          load_hours=teacher_load)
         db_client.add_record(record)
+
+    # --- Subject --- #
+    fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
+    subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
+    subject_ds = pd.Series(subject_df["subjects"], name="name")
+    db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
 
 if __name__ == "__main__":
