@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import sqlalchemy as sql
 from dotenv import load_dotenv
+from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
 from schedulebot.db.models import metadata
@@ -60,14 +61,7 @@ class DatabaseClient():
             session.add(record)
             session.commit()
 
-    def get_id(self, table, column, quality) -> List[int]:
+    def get_id(self, table, conditions: list):
         with self._session() as session:
-            x = [val[0] for val in session.query(table.id).filter(column == quality).all()]
-        return x
-
-    def get(self, table, first, middle, last) -> List[int]:
-        with self._session() as session:
-            x = [val[0] for val in session.query(table.id).filter(table.first_name.like(first),
-                                                                  table.middle_name.like(middle),
-                                                                  table.last_name.like(last)).all()]
-        return x
+            record = session.query(table).filter(and_(*conditions))[0]
+        return record.id
