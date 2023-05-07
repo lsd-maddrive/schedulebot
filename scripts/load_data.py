@@ -48,10 +48,10 @@ def main(version: str):
     db_client.add_df(df=time_interval_df, table_name=TimeInterval.__tablename__)
 
     # --- Study interval --- #
-    teachers = db_client.get_id_list(Weekdays)
-    subjects = db_client.get_id_list(TimeInterval)
-    for day in teachers:
-        for time in subjects:
+    study_days = db_client.get_id_list(Weekdays)
+    time_interval = db_client.get_id_list(TimeInterval)
+    for day in study_days:
+        for time in time_interval:
             record = Study_interval(time_interval_id=time, day_id=day)
             db_client.add_record(record)
 
@@ -76,17 +76,17 @@ def main(version: str):
     db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
-    subjects = subject_df["subjects"].values
+    time_interval = subject_df["subjects"].values
     teachers_info = subject_df.apply(lambda row: row[row == 1].index.values, axis=1).values
 
-    for list_names, subject in zip(teachers_info, subjects):
+    for list_names, subject in zip(teachers_info, time_interval):
+        subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
         for name in list_names:
-            teacher_name = name.split()
-            conditions = [Teacher.first_name.like(teacher_name[1]),
-                          Teacher.middle_name.like(teacher_name[0]),
-                          Teacher.last_name.like(teacher_name[2])]
+            name, middle_name, last_name = name.split()
+            conditions = [Teacher.first_name.like(name),
+                          Teacher.middle_name.like(middle_name),
+                          Teacher.last_name.like(last_name)]
             teacher_index = db_client.get_id(Teacher, conditions)
-            subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
             record = TeacherSubject(teacher_id=teacher_index, subject_id=subject_index)
             db_client.add_record(record)
 
