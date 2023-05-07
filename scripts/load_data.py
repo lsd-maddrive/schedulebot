@@ -7,6 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
+    Room,
     Room_type,
     Study_interval,
     Subject,
@@ -80,8 +81,8 @@ def main(version: str):
     teachers_info = subject_df.apply(lambda row: row[row == 1].index.values, axis=1).values
 
     for list_names, subject in zip(teachers_info, subjects):
-        for name in list_names:
-            teacher_name = name.split()
+        for room in list_names:
+            teacher_name = room.split()
             conditions = [Teacher.first_name.like(teacher_name[1]),
                           Teacher.middle_name.like(teacher_name[0]),
                           Teacher.last_name.like(teacher_name[2])]
@@ -91,9 +92,32 @@ def main(version: str):
             db_client.add_record(record)
 
     # --- Room type --- #
-    room = ['lecture', 'lab', 'practice']
+    room = ['lecture', 'lab', 'practice', 'mixed']
     room_df = pd.DataFrame(room, columns=['name'])
     db_client.add_df(df=room_df, table_name=Room_type.__tablename__)
+
+    # --- Room --- #
+    fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
+    room_df = pd.read_csv(fpath_room, index_col=0)
+    for room, subject_type in zip(room_df['room'], room_df['subject_type']):
+        building = room[0]
+        floor = room[1]
+        number = room[2:]
+        if subject_type == 'пр.':
+            room_type = 'practice'
+        if subject_type == 'лек.':
+            room_type = 'lecture'
+        if subject_type == 'лаб.':
+            room_type = 'lab'
+        if subject_type == 'mixed':
+            room_type = 'mixed'
+        type_id = db_client.get_id(Room_type, [Room_type.name.like(room_type)])
+        record = Room(name=room,
+                      building=building,
+                      floor=floor,
+                      number=number,
+                      type_id=type_id)
+        db_client.add_record(record)
 
 
 if __name__ == "__main__":
