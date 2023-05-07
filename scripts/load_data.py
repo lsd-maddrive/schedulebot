@@ -7,6 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
+    Room_type,
     Study_interval,
     Subject,
     Teacher,
@@ -89,6 +90,11 @@ def main(version: str):
                     db_client.add_record(record)
                 j += 1
         i += 1
+
+    # --- Room type --- #
+    room = ['lecture', 'lab', 'practice']
+    room_df = pd.DataFrame(room, columns=['name'])
+    db_client.add_df(df=room_df, table_name=Room_type.__tablename__)
 
 
 if __name__ == "__main__":
