@@ -64,3 +64,10 @@ class DatabaseClient():
         with self._session() as session:
             x = [val[0] for val in session.query(table.id).filter(column == quality).all()]
         return x
+
+    def get(self, table, first, middle, last) -> List[int]:
+        with self._session() as session:
+            x = [val[0] for val in session.query(table.id).filter(table.first_name.like(first),
+                                                                  table.middle_name.like(middle),
+                                                                  table.last_name.like(last)).all()]
+        return x

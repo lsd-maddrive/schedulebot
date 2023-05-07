@@ -59,7 +59,7 @@ def main(version: str):
     lessons_one_week = dataframe['TEACHERS_LESSONS_ONE_WEEK'].tolist()
 
     for teacher_info, teacher_load in zip(full_teachers_names, lessons_one_week):
-        last_name, first_name, middle_name, qualification = teacher_info.split()
+        middle_name, first_name, last_name, qualification = teacher_info.split()
         quality_id = db_client.get_id(Qualification, Qualification.name, qualification)[0]
         record = Teacher(middle_name=middle_name,
                          first_name=first_name,
@@ -70,18 +70,25 @@ def main(version: str):
 
     # --- Subject --- #
     fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
-    subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
-    subject_df['name'] = subject_df
-    db_client.add_df(subject_df['name'], table_name=Subject.__tablename__)
+    subject_df = pd.read_csv(fpath_sub)
+    subject_ds = pd.Series(subject_df["subjects"], name="name")
+    db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
-    # subject_teachers_df = pd.read_csv(fpath_sub)
-
-    teachers = db_client.get_id_list(Teacher)
-    subjects = db_client.get_id_list(Subject)
-    for x, y in zip(teachers, subjects):
-        record = Teacher_subject(teacher_id=x, subject_id=y)
-        db_client.add_record(record)
+    i = 0
+    for column in subject_df:
+        if column != 'Unnamed: 0' and column != 'subjects':
+            j = 0
+            for index in subject_df[column]:
+                if index == 1:
+                    teacher = column.split()
+                    teacher_index = db_client.get(Teacher, teacher[1], teacher[0], teacher[2])[0]
+                    subject = subject_df.iloc[j, 1]
+                    subject_index = db_client.get_id(Subject, Subject.name, subject)[0]
+                    record = Teacher_subject(teacher_id=teacher_index, subject_id=subject_index)
+                    db_client.add_record(record)
+                j += 1
+        i += 1
 
 
 if __name__ == "__main__":
