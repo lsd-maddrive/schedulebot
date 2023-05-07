@@ -75,3 +75,12 @@ class Teacher_subject(Model):
     id = Column(Integer, primary_key=True)
     teacher_id = Column(ForeignKey("teachers.id"))
     subject_id = Column(ForeignKey("subjects.id"))
+
+
+class Room_type(Model):
+    """Table with room type"""
+
+    __tablename__ = "room_type"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30), nullable=False)
