@@ -26,7 +26,7 @@ class Weekdays(Model):
     name = Column(String(30), nullable=False)
 
 
-class Time_interval(Model):
+class TimeInterval(Model):
     """Table with time intervals"""
 
     __tablename__ = "time_interval"
@@ -67,7 +67,7 @@ class Subject(Model):
     name = Column(String(30), nullable=False)
 
 
-class Teacher_subject(Model):
+class TeacherSubject(Model):
     """Table with teachers subjects"""
 
     __tablename__ = "teachers_subjects"
