@@ -5,7 +5,15 @@ import click
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
-from schedulebot.db.models import Qualification, Study_interval, Subject, Teacher, Time_interval, Weekdays
+from schedulebot.db.models import (
+    Qualification,
+    Study_interval,
+    Subject,
+    Teacher,
+    TeacherSubject,
+    TimeInterval,
+    Weekdays,
+)
 from schedulebot.utils.load import get_time_intervals, weekdays
 
 logging.basicConfig(level=logging.INFO)
@@ -36,13 +44,13 @@ def main(version: str):
 
     # --- Time interval --- #
     time_interval_df = pd.DataFrame(get_time_intervals(), columns=['interval'])
-    db_client.add_df(df=time_interval_df, table_name=Time_interval.__tablename__)
+    db_client.add_df(df=time_interval_df, table_name=TimeInterval.__tablename__)
 
     # --- Study interval --- #
-    studydays = db_client.get_id_list(Weekdays)
-    studytime = db_client.get_id_list(Time_interval)
-    for day in studydays:
-        for time in studytime:
+    study_days = db_client.get_id_list(Weekdays)
+    time_interval = db_client.get_id_list(TimeInterval)
+    for day in study_days:
+        for time in time_interval:
             record = Study_interval(time_interval_id=time, day_id=day)
             db_client.add_record(record)
 
@@ -51,8 +59,8 @@ def main(version: str):
     lessons_one_week = dataframe['TEACHERS_LESSONS_ONE_WEEK'].tolist()
 
     for teacher_info, teacher_load in zip(full_teachers_names, lessons_one_week):
-        last_name, first_name, middle_name, qualification = teacher_info.split()
-        quality_id = db_client.get_id(Qualification, Qualification.name, qualification)[0]
+        middle_name, first_name, last_name, qualification = teacher_info.split()
+        quality_id = db_client.get_id(Qualification, [Qualification.name.like(qualification)])
         record = Teacher(middle_name=middle_name,
                          first_name=first_name,
                          last_name=last_name,
@@ -62,9 +70,26 @@ def main(version: str):
 
     # --- Subject --- #
     fpath_sub = os.path.join(src_dpath, "Subjects+Teachers.csv")
-    subject_df = pd.read_csv(fpath_sub, usecols=['subjects'])
+    subject_df = pd.read_csv(fpath_sub, index_col=0)
     subject_ds = pd.Series(subject_df["subjects"], name="name")
     db_client.add_df(subject_ds, table_name=Subject.__tablename__)
+
+    # --- Teacher subject --- #
+    time_interval = subject_df["subjects"].values
+    teachers_info = subject_df.apply(lambda row: row[row == 1].index.values, axis=1).values
+
+    for list_names, subject in zip(teachers_info, time_interval):
+        subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
+        for name in list_names:
+            middle_name, first_name, last_name = name.split()[:-1]
+            conditions = [
+                Teacher.first_name.like(first_name),
+                Teacher.middle_name.like(middle_name),
+                Teacher.last_name.like(last_name)
+            ]
+            teacher_index = db_client.get_id(Teacher, conditions)
+            record = TeacherSubject(teacher_id=teacher_index, subject_id=subject_index)
+            db_client.add_record(record)
 
 
 if __name__ == "__main__":
