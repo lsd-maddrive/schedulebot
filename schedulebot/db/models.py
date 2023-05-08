@@ -77,7 +77,7 @@ class TeacherSubject(Model):
     subject_id = Column(ForeignKey("subjects.id"))
 
 
-class Room_type(Model):
+class RoomType(Model):
     """Table with room type"""
 
     __tablename__ = "room_type"
