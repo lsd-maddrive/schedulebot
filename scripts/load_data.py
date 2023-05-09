@@ -82,13 +82,12 @@ def main(version: str):
     for list_names, subject in zip(teachers_info, time_interval):
         subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
         for name in list_names:
-            name = name.split()
-            first_name = name[1]
-            middle_name = name[0]
-            last_name = name[2]
-            conditions = [Teacher.first_name.like(first_name),
-                          Teacher.middle_name.like(middle_name),
-                          Teacher.last_name.like(last_name)]
+            middle_name, first_name, last_name = name.split()[:-1]
+            conditions = [
+                Teacher.first_name.like(first_name),
+                Teacher.middle_name.like(middle_name),
+                Teacher.last_name.like(last_name)
+            ]
             teacher_index = db_client.get_id(Teacher, conditions)
             record = TeacherSubject(teacher_id=teacher_index, subject_id=subject_index)
             db_client.add_record(record)
