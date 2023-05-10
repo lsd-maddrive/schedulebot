@@ -18,3 +18,10 @@ def get_time_intervals() -> List[str]:
                       '15:30 - 17:00',
                       '17:20 - 18:50']
     return (time_intervals)
+
+
+def room_type() -> List[str]:
+    """The function should return a list of room types"""
+
+    room_type = ['lecture', 'lab', 'practice', 'mixed']
+    return (room_type)
