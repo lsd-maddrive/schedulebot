@@ -97,3 +97,13 @@ class Room(Model):
     floor = Column(Integer, nullable=False)
     number = Column(String, nullable=False)
     type_id = Column(ForeignKey("room_type.id"))
+
+
+class SubjectRoom():
+    """Table with university's subject rooms"""
+
+    __tablename__ = "subject_room"
+
+    id = Column(Integer, primary_key=True)
+    subject_id = Column(ForeignKey('subject.id'))
+    room_id = Column(ForeignKey('room.id'))
