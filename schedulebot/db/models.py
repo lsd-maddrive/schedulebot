@@ -99,11 +99,11 @@ class Room(Model):
     type_id = Column(ForeignKey("room_type.id"))
 
 
-class SubjectRoom():
+class SubjectRoom(Model):
     """Table with university's subject rooms"""
 
     __tablename__ = "subject_room"
 
     id = Column(Integer, primary_key=True)
-    subject_id = Column(ForeignKey('subject.id'))
+    subject_id = Column(ForeignKey('subjects.id'))
     room_id = Column(ForeignKey('room.id'))
