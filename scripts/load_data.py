@@ -7,7 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
-    Study_interval,
+    StudyInterval,
     Subject,
     Teacher,
     TeacherSubject,
@@ -51,7 +51,7 @@ def main(version: str):
     time_interval = db_client.get_id_list(TimeInterval)
     for day in study_days:
         for time in time_interval:
-            record = Study_interval(time_interval_id=time, day_id=day)
+            record = StudyInterval(time_interval_id=time, day_id=day)
             db_client.add_record(record)
 
     # --- Teachers --- #
