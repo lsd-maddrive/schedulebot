@@ -35,7 +35,7 @@ class TimeInterval(Model):
     interval = Column(String(30), nullable=False)
 
 
-class Study_interval(Model):
+class StudyInterval(Model):
     """Table with study interval"""
 
     __tablename__ = "study_interval"
