@@ -8,9 +8,10 @@ from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
     Room,
-    Room_type,
-    Study_interval,
+    RoomType,
+    StudyInterval,
     Subject,
+    SubjectRoom,
     Teacher,
     TeacherSubject,
     TimeInterval,
@@ -53,7 +54,7 @@ def main(version: str):
     time_interval = db_client.get_id_list(TimeInterval)
     for day in study_days:
         for time in time_interval:
-            record = Study_interval(time_interval_id=time, day_id=day)
+            record = StudyInterval(time_interval_id=time, day_id=day)
             db_client.add_record(record)
 
     # --- Teachers --- #
@@ -96,7 +97,7 @@ def main(version: str):
     # --- Room type --- #
     room = ['lecture', 'lab', 'practice', 'mixed']
     room_df = pd.DataFrame(room, columns=['name'])
-    db_client.add_df(df=room_df, table_name=Room_type.__tablename__)
+    db_client.add_df(df=room_df, table_name=RoomType.__tablename__)
 
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
@@ -113,7 +114,7 @@ def main(version: str):
             room_type = 'lab'
         if subject_type == 'mixed':
             room_type = 'mixed'
-        type_id = db_client.get_id(Room_type, [Room_type.name.like(room_type)])
+        type_id = db_client.get_id(RoomType, [RoomType.name.like(room_type)])
         record = Room(name=room,
                       building=building,
                       floor=floor,
@@ -121,6 +122,27 @@ def main(version: str):
                       type_id=type_id)
         db_client.add_record(record)
 
+    # --- Subject room --- #
+    fpath_room = os.path.join(src_dpath, "Lab+Room.csv")
+    subject_room_df = pd.read_csv(fpath_room, index_col=0)
+    labs = subject_room_df["lab"]
+    rooms = subject_room_df["room"]
+    for x, lab in zip(rooms, labs):
+        room_id = db_client.get_id(Room, conditions=[Room.name.like(x)])
+        lab = lab + ' лаб.'
+        subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(lab)])
+        # subject_ds
+        record = SubjectRoom(subject_id=subject_id, room_id=room_id)
+        db_client.add_record(record)
+
+    """lecture_room_id = db_client.get_id(RoomType, conditions=[RoomType.name.like('lecture')])
+    rooms_id = db_client.get_id(Room, conditions=[Room.name.like(lecture_room_id)])
+    # список id аудиторий с лекциями
+    for id in rooms_id:
+        subject_df['subjects']"""
+    test = db_client.get_id(Subject, conditions=[Subject.name.like('лек.')])
+    print(test)
+
 
 if __name__ == "__main__":
-    main()
+    main('2023-05-05')
