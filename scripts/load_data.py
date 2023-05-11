@@ -17,7 +17,13 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import eng_subject_type, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import (
+    eng_room_type,
+    get_time_intervals,
+    room_types,
+    subject_type_to_room_type,
+    weekdays,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -101,7 +107,7 @@ def main(version: str):
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
     room_df = pd.read_csv(fpath_room, index_col=0)
-    room_type_map = eng_subject_type()
+    room_type_map = eng_room_type()
     for room, subject_type in zip(room_df['room'], room_df['subject_type']):
         building, floor = room[:2]
         number = room[2:]
@@ -123,18 +129,21 @@ def main(version: str):
         room_id = db_client.get_id(Room, conditions=[Room.name.like(x)])
         lab = lab + ' лаб.'
         subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(lab)])
-        # subject_ds
         record = SubjectRoom(subject_id=subject_id, room_id=room_id)
         db_client.add_record(record)
 
-    """lecture_room_id = db_client.get_id(RoomType, conditions=[RoomType.name.like('lecture')])
-    rooms_id = db_client.get_id(Room, conditions=[Room.name.like(lecture_room_id)])
-    # список id аудиторий с лекциями
-    for id in rooms_id:
-        subject_df['subjects']"""
-    test = db_client.get_id(Subject, conditions=[Subject.name.like('лек.')])
-    print(test)
+    for subject_type in subject_ds:
+        subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject_type)])
+        subject_type = subject_type.split()[-1]
+        if subject_type != 'лаб.':
+            subject_id_map = subject_type_to_room_type()
+            room_type = subject_id_map[subject_type]
+            for x in room_type:
+                rooms_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(x)])
+                for room_id in rooms_id:
+                    record = SubjectRoom(subject_id=subject_id, room_id=room_id)
+                    db_client.add_record(record)
 
 
 if __name__ == "__main__":
-    main('2023-05-05')
+    main()
