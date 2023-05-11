@@ -126,7 +126,8 @@ def main(version: str):
         record = SubjectRoom(subject_id=subject_id, room_id=room_id)
         db_client.add_record(record)
 
-    mixed_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(4)])
+    mixed_id = db_client.get_id(RoomType, conditions=[RoomType.name.like('mixed')])
+    mixed_room_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(mixed_id)])
     for subject_type in subject_ds:
         subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject_type)])
         subject_type = subject_type.split()[-1]
@@ -138,7 +139,7 @@ def main(version: str):
                 record = SubjectRoom(subject_id=subject_id, room_id=room_id)
                 db_client.add_record(record)
 
-            for id in mixed_id:
+            for id in mixed_room_id:
                 record = SubjectRoom(subject_id=subject_id, room_id=id)
                 db_client.add_record(record)
 
