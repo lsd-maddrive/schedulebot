@@ -92,8 +92,8 @@ class Room(Model):
     __tablename__ = "room"
 
     id = Column(Integer, primary_key=True)
-    name = Column(Integer, nullable=False)
+    name = Column(String, nullable=False)
+    building = Column(String, nullable=False)
     floor = Column(Integer, nullable=False)
-    building = Column(Integer, nullable=False)
-    number = Column(Integer, nullable=False)
+    number = Column(String, nullable=False)
     type_id = Column(ForeignKey("room_type.id"))

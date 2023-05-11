@@ -20,8 +20,18 @@ def get_time_intervals() -> List[str]:
     return (time_intervals)
 
 
-def room_type() -> List[str]:
+def room_types() -> List[str]:
     """The function should return a list of room types"""
 
     room_type = ['lecture', 'lab', 'practice', 'mixed']
     return (room_type)
+
+
+def eng_subject_type():
+    dictionary = {
+        'пр.': 'practice',
+        'лек.': 'lecture',
+        'лаб.': 'lab',
+        'mixed': 'mixed'
+    }
+    return dictionary

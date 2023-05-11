@@ -7,6 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
+    Room,
     RoomType,
     StudyInterval,
     Subject,
@@ -15,7 +16,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import get_time_intervals, room_type, weekdays
+from schedulebot.utils.load import eng_subject_type, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -93,8 +94,24 @@ def main(version: str):
             db_client.add_record(record)
 
     # --- Room type --- #
-    room_df = pd.DataFrame(room_type(), columns=['name'])
+    room_df = pd.DataFrame(room_types(), columns=['name'])
     db_client.add_df(df=room_df, table_name=RoomType.__tablename__)
+
+    # --- Room --- #
+    fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
+    room_df = pd.read_csv(fpath_room, index_col=0)
+    room_type_map = eng_subject_type()
+    for room, subject_type in zip(room_df['room'], room_df['subject_type']):
+        building, floor = room[:2]
+        number = room[2:]
+        subject_type = room_type_map[subject_type]
+        type_id = db_client.get_id(RoomType, [RoomType.name.like(subject_type)])
+        record = Room(name=room,
+                      building=building,
+                      floor=floor,
+                      number=number,
+                      type_id=type_id)
+        db_client.add_record(record)
 
 
 if __name__ == "__main__":
