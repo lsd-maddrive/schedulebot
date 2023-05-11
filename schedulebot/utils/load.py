@@ -25,3 +25,13 @@ def room_types() -> List[str]:
 
     room_type = ['lecture', 'lab', 'practice', 'mixed']
     return (room_type)
+
+
+def eng_subject_type():
+    dictionary = {
+        'пр.': 'practice',
+        'лек.': 'lecture',
+        'лаб.': 'lab',
+        'mixed': 'mixed'
+    }
+    return dictionary

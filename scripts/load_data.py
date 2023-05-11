@@ -17,7 +17,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import eng_subject_type, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -101,19 +101,12 @@ def main(version: str):
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
     room_df = pd.read_csv(fpath_room, index_col=0)
+    room_type_map = eng_subject_type()
     for room, subject_type in zip(room_df['room'], room_df['subject_type']):
-        building = room[0]
-        floor = room[1]
+        building, floor = room[:2]
         number = room[2:]
-        if subject_type == 'пр.':
-            room_type = 'practice'
-        if subject_type == 'лек.':
-            room_type = 'lecture'
-        if subject_type == 'лаб.':
-            room_type = 'lab'
-        if subject_type == 'mixed':
-            room_type = 'mixed'
-        type_id = db_client.get_id(RoomType, [RoomType.name.like(room_type)])
+        subject_type = room_type_map[subject_type]
+        type_id = db_client.get_id(RoomType, [RoomType.name.like(subject_type)])
         record = Room(name=room,
                       building=building,
                       floor=floor,
