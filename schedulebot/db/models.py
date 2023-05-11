@@ -84,3 +84,16 @@ class RoomType(Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
+
+
+class Room(Model):
+    """Table with university's rooms"""
+
+    __tablename__ = "room"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Integer, nullable=False)
+    floor = Column(Integer, nullable=False)
+    building = Column(Integer, nullable=False)
+    number = Column(Integer, nullable=False)
+    type_id = Column(ForeignKey("room_type.id"))
