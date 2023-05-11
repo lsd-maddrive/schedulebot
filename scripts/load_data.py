@@ -100,10 +100,10 @@ def main(version: str):
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
     room_df = pd.read_csv(fpath_room, index_col=0)
+    room_type = eng_subject_type()
     for room, subject_type in zip(room_df['room'], room_df['subject_type']):
         building, floor = room[:2]
         number = room[2:]
-        room_type = eng_subject_type()
         subject_type = room_type[subject_type]
         type_id = db_client.get_id(RoomType, [RoomType.name.like(subject_type)])
         record = Room(name=room,
