@@ -17,13 +17,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import (
-    eng_room_type,
-    get_time_intervals,
-    room_types,
-    subject_type_to_room_type,
-    weekdays,
-)
+from schedulebot.utils.load import eng_room_type, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -132,17 +126,21 @@ def main(version: str):
         record = SubjectRoom(subject_id=subject_id, room_id=room_id)
         db_client.add_record(record)
 
+    mixed_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(4)])
     for subject_type in subject_ds:
         subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject_type)])
         subject_type = subject_type.split()[-1]
         if subject_type != 'лаб.':
-            subject_id_map = subject_type_to_room_type()
-            room_type = subject_id_map[subject_type]
-            for x in room_type:
-                rooms_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(x)])
-                for room_id in rooms_id:
-                    record = SubjectRoom(subject_id=subject_id, room_id=room_id)
-                    db_client.add_record(record)
+            room_type = room_type_map[subject_type]
+            type_id = db_client.get_id(RoomType, [RoomType.name.like(room_type)])
+            rooms_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(type_id)])
+            for room_id in rooms_id:
+                record = SubjectRoom(subject_id=subject_id, room_id=room_id)
+                db_client.add_record(record)
+
+            for id in mixed_id:
+                record = SubjectRoom(subject_id=subject_id, room_id=id)
+                db_client.add_record(record)
 
 
 if __name__ == "__main__":

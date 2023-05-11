@@ -36,20 +36,7 @@ def eng_room_type():
         'пр.': 'practice',
         'лек.': 'lecture',
         'лаб.': 'lab',
-        'mixed': 'mixed'
-    }
-    return dictionary
-
-
-def subject_type_to_room_type():
-    """The function should return a dictionary
-    with key = russian subject type and
-    with value = room type id's for this key"""
-
-    dictionary = {
-        'пр.': [3, 4],
-        'лек.': [1, 4],
-        'лаб.': [2, 4],
-        'кр.': [3, 4]
+        'mixed': 'mixed',
+        'кр.': 'practice'
     }
     return dictionary
