@@ -7,7 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Qualification,
-    Room_type,
+    RoomType,
     Study_interval,
     Subject,
     Teacher,
@@ -15,7 +15,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import get_time_intervals, weekdays
+from schedulebot.utils.load import get_time_intervals, room_type, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -93,9 +93,8 @@ def main(version: str):
             db_client.add_record(record)
 
     # --- Room type --- #
-    room = ['lecture', 'lab', 'practice']
-    room_df = pd.DataFrame(room, columns=['name'])
-    db_client.add_df(df=room_df, table_name=Room_type.__tablename__)
+    room_df = pd.DataFrame(room_type(), columns=['name'])
+    db_client.add_df(df=room_df, table_name=RoomType.__tablename__)
 
 
 if __name__ == "__main__":
