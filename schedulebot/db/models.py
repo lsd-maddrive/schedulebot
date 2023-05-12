@@ -116,3 +116,13 @@ class Group(Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(Integer, nullable=False)
+
+
+class GroupSubject(Model):
+    """Table with groups and subjects"""
+
+    __tablename__ = 'group_subject'
+
+    id = Column(Integer, primary_key=True)
+    group_id = Column(ForeignKey('group.id'))
+    subject_id = Column(ForeignKey('subjects.id'))
