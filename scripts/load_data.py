@@ -6,6 +6,7 @@ import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
+    Group,
     Qualification,
     Room,
     RoomType,
@@ -17,7 +18,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import eng_room_type, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -142,6 +143,10 @@ def main(version: str):
             for id in mixed_room_id:
                 record = SubjectRoom(subject_id=subject_id, room_id=id)
                 db_client.add_record(record)
+
+    # --- Groups --- #
+    groups = pd.DataFrame(get_groups(), columns=['name'])
+    db_client.add_df(groups, table_name=Group.__tablename__)
 
 
 if __name__ == "__main__":
