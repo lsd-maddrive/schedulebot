@@ -7,6 +7,7 @@ import pandas as pd
 from schedulebot.db.client import DatabaseClient
 from schedulebot.db.models import (
     Group,
+    GroupSubject,
     Qualification,
     Room,
     RoomType,
@@ -79,10 +80,10 @@ def main(version: str):
     db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
-    time_interval = subject_df["subjects"].values
+    subjects_info = subject_df["subjects"].values
     teachers_info = subject_df.apply(lambda row: row[row == 1].index.values, axis=1).values
 
-    for list_names, subject in zip(teachers_info, time_interval):
+    for list_names, subject in zip(teachers_info, subjects_info):
         subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
         for name in list_names:
             middle_name, first_name, last_name = name.split()[:-1]
@@ -147,6 +148,19 @@ def main(version: str):
     # --- Groups --- #
     groups = pd.DataFrame(get_groups(), columns=['name'])
     db_client.add_df(groups, table_name=Group.__tablename__)
+
+    # --- Group subject --- #
+    fpath_room = os.path.join(src_dpath, "Subjects+Groups.csv")
+    subject_group_df = pd.read_csv(fpath_room, index_col=0)
+
+    subjects = subject_group_df["subjects"].values
+    groups_info = subject_group_df.apply(lambda row: row[row == 1].index.values, axis=1).values
+    for subject, group_list in zip(subjects, groups_info):
+        subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject)])
+        for value in group_list:
+            group_id = db_client.get_id(Group, conditions=[Group.name.like(int(value))])
+            record = GroupSubject(group_id=group_id, subject_id=subject_id)
+            db_client.add_record(record)
 
 
 if __name__ == "__main__":
