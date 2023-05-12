@@ -42,7 +42,7 @@ def eng_room_type():
     return dictionary
 
 
-def create_groups():
+def get_groups():
     """The function should return a list of integer group's values"""
 
     groups = [9491, 9492, 9493, 9494]

@@ -19,7 +19,7 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import create_groups, eng_room_type, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -146,7 +146,7 @@ def main(version: str):
                 db_client.add_record(record)
 
     # --- Groups --- #
-    groups = pd.DataFrame(create_groups(), columns=['name'])
+    groups = pd.DataFrame(get_groups(), columns=['name'])
     db_client.add_df(groups, table_name=Group.__tablename__)
 
     # --- Group subject --- #
