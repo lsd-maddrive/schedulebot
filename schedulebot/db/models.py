@@ -124,5 +124,5 @@ class GroupSubject(Model):
     __tablename__ = 'group_subject'
 
     id = Column(Integer, primary_key=True)
-    group_id = Column(ForeignKey='group.id')
-    subject_id = Column(ForeignKey='subjects.id')
+    group_id = Column(ForeignKey('group.id'))
+    subject_id = Column(ForeignKey('subjects.id'))
