@@ -65,3 +65,9 @@ class DatabaseClient():
         with self._session() as session:
             record = session.query(table).filter(and_(*conditions))[0]
         return record.id
+
+    def get_filter_ids(self, table, conditions: list):
+        with self._session() as session:
+            record = session.query(table).filter(and_(*conditions))
+        filter_ids = [rec.id for rec in record]
+        return filter_ids

@@ -27,11 +27,16 @@ def room_types() -> List[str]:
     return (room_type)
 
 
-def eng_subject_type():
+def eng_room_type():
+    """The function should return a dictionary
+    with key = russian room type and
+    with value = english room type"""
+
     dictionary = {
         'пр.': 'practice',
         'лек.': 'lecture',
         'лаб.': 'lab',
-        'mixed': 'mixed'
+        'mixed': 'mixed',
+        'кр.': 'practice'
     }
     return dictionary

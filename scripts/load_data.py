@@ -11,12 +11,13 @@ from schedulebot.db.models import (
     RoomType,
     StudyInterval,
     Subject,
+    SubjectRoom,
     Teacher,
     TeacherSubject,
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import eng_subject_type, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import eng_room_type, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -100,7 +101,7 @@ def main(version: str):
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
     room_df = pd.read_csv(fpath_room, index_col=0)
-    room_type_map = eng_subject_type()
+    room_type_map = eng_room_type()
     for room, subject_type in zip(room_df['room'], room_df['subject_type']):
         building, floor = room[:2]
         number = room[2:]
@@ -112,6 +113,35 @@ def main(version: str):
                       number=number,
                       type_id=type_id)
         db_client.add_record(record)
+
+    # --- Subject room --- #
+    fpath_room = os.path.join(src_dpath, "Lab+Room.csv")
+    subject_room_df = pd.read_csv(fpath_room, index_col=0)
+    labs = subject_room_df["lab"]
+    rooms = subject_room_df["room"]
+    for x, lab in zip(rooms, labs):
+        room_id = db_client.get_id(Room, conditions=[Room.name.like(x)])
+        lab = lab + ' лаб.'
+        subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(lab)])
+        record = SubjectRoom(subject_id=subject_id, room_id=room_id)
+        db_client.add_record(record)
+
+    mixed_id = db_client.get_id(RoomType, conditions=[RoomType.name.like('mixed')])
+    mixed_room_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(mixed_id)])
+    for subject_type in subject_ds:
+        subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject_type)])
+        subject_type = subject_type.split()[-1]
+        if subject_type != 'лаб.':
+            room_type = room_type_map[subject_type]
+            type_id = db_client.get_id(RoomType, [RoomType.name.like(room_type)])
+            rooms_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(type_id)])
+            for room_id in rooms_id:
+                record = SubjectRoom(subject_id=subject_id, room_id=room_id)
+                db_client.add_record(record)
+
+            for id in mixed_room_id:
+                record = SubjectRoom(subject_id=subject_id, room_id=id)
+                db_client.add_record(record)
 
 
 if __name__ == "__main__":
