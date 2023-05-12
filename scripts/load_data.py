@@ -80,10 +80,10 @@ def main(version: str):
     db_client.add_df(subject_ds, table_name=Subject.__tablename__)
 
     # --- Teacher subject --- #
-    time_interval = subject_df["subjects"].values
+    subjects_info = subject_df["subjects"].values
     teachers_info = subject_df.apply(lambda row: row[row == 1].index.values, axis=1).values
 
-    for list_names, subject in zip(teachers_info, time_interval):
+    for list_names, subject in zip(teachers_info, subjects_info):
         subject_index = db_client.get_id(Subject, [Subject.name.like(subject)])
         for name in list_names:
             middle_name, first_name, last_name = name.split()[:-1]
