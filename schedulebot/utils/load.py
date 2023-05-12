@@ -40,3 +40,10 @@ def eng_room_type():
         'кр.': 'practice'
     }
     return dictionary
+
+
+def create_groups():
+    """The function should return a list of integer group's values"""
+
+    groups = [9491, 9492, 9493, 9494]
+    return groups
