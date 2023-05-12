@@ -107,3 +107,12 @@ class SubjectRoom(Model):
     id = Column(Integer, primary_key=True)
     subject_id = Column(ForeignKey('subjects.id'))
     room_id = Column(ForeignKey('room.id'))
+
+
+class Group(Model):
+    """Table with groups"""
+
+    __tablename__ = 'group'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Integer, nullable=False)
