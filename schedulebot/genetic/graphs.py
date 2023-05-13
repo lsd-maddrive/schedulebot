@@ -38,11 +38,11 @@ class GraphColoringProblem:
         one color per node in the graph
         :return: Calculated cost of the arrangement.
         """
-        x = self.hardConstraintPenalty
-        y = self.getViolationsCount(colorArrangement)
-        z = self.getNumberOfColors(colorArrangement)
+        penalty = self.hardConstraintPenalty
+        violation_count = self.getViolationsCount(colorArrangement)
+        colors_number = self.getNumberOfColors(colorArrangement)
 
-        return (x * y + z)
+        return (penalty * violation_count + colors_number)
 
     def getViolationsCount(self, colorArrangement):
         """
