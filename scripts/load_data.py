@@ -1,7 +1,9 @@
 import logging
 import os
 
+#  import json
 import click
+import networkx as nx
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
@@ -19,7 +21,16 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import (
+    eng_room_type,
+    filling_the_graph,
+    get_groups,
+    get_time_intervals,
+    graph_edge_1week,
+    graph_edge_2week,
+    room_types,
+    weekdays,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -161,6 +172,22 @@ def main(version: str):
             group_id = db_client.get_id(Group, conditions=[Group.name.like(int(value))])
             record = GroupSubject(group_id=group_id, subject_id=subject_id)
             db_client.add_record(record)
+
+    # --- Graph for 1 week --- #
+    dictionary = graph_edge_1week()
+    G = nx.Graph()
+    G = filling_the_graph(dictionary, G)
+    file_path_1 = os.path.join(DATA_DPATH, "1week.gexf")
+    nx.write_gexf(G, file_path_1)
+
+    # --- Graph for 2 week --- #
+    dictionary = graph_edge_2week()
+    H = nx.Graph()
+    H = filling_the_graph(dictionary, H)
+    nx.write_gexf(H, os.path.join(DATA_DPATH, "2week.gexf"))
+
+    """with open('data.txt', 'w') as outfile:
+        json.dump(data, outfile)"""
 
 
 if __name__ == "__main__":
