@@ -108,24 +108,3 @@ class GraphColoringProblem:
         # nx.draw_circular(self.graph, node_color=color_map, with_labels=True)
 
         return plt
-
-
-# testing the class:
-def main():
-    # create a problem instance with petersen graph:
-    gcp = GraphColoringProblem(nx.petersen_graph(), 10)
-
-    # generate a random solution with up to 5 different colors:
-    solution = np.random.randint(5, size=len(gcp))
-
-    print("solution = ", solution)
-    print("number of colors = ", gcp.getNumberOfColors(solution))
-    print("Number of violations = ", gcp.getViolationsCount(solution))
-    print("Cost = ", gcp.getCost(solution))
-
-    plot = gcp.plotGraph(solution)
-    plot.show()
-
-
-if __name__ == "__main__":
-    main()
