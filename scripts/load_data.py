@@ -1,10 +1,7 @@
-import json
 import logging
 import os
-import pickle
 
 import click
-import networkx as nx
 import pandas as pd
 
 from schedulebot.db.client import DatabaseClient
@@ -24,18 +21,7 @@ from schedulebot.db.models import (
 )
 
 # from schedulebot.genetic.graphs import GraphColoringProblem
-from schedulebot.utils.load import (
-    eng_room_type,
-    filling_the_graph,
-    get_groups,
-    get_time_intervals,
-    graph_edge_1week,
-    graph_edge_2week,
-    graph_nodes_1week,
-    graph_nodes_2week,
-    room_types,
-    weekdays,
-)
+from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -177,38 +163,6 @@ def main(version: str):
             group_id = db_client.get_id(Group, conditions=[Group.name.like(int(value))])
             record = GroupSubject(group_id=group_id, subject_id=subject_id)
             db_client.add_record(record)
-
-    # --- Graph for 1 week --- #
-    dictionary = graph_edge_1week()
-    G = nx.Graph()
-    G = filling_the_graph(dictionary, G)
-    # gen_alg = GraphColoringProblem(G, 10)
-    graph_path = os.path.join(DATA_DPATH, "graph")
-    nodes_1week = graph_nodes_1week()
-    fpath_json_edge_1 = os.path.join(graph_path, "1week_edge.json")
-    fpath_json_node_1 = os.path.join(graph_path, "1week_node.json")
-    with open(fpath_json_edge_1, 'w') as outfile:
-        json.dump(dictionary, outfile)
-    with open(fpath_json_node_1, 'w') as outfile:
-        json.dump(nodes_1week, outfile)
-    file_path_pickle_1 = os.path.join(graph_path, "1week.pickle")
-    pickle.dump(G, open(file_path_pickle_1, 'wb'))
-    # nx.write_gexf(G, file_path_1)
-
-    # --- Graph for 2 week --- #
-    dictionary = graph_edge_2week()
-    H = nx.Graph()
-    H = filling_the_graph(dictionary, H)
-    nodes_2week = graph_nodes_2week()
-    fpath_json_edge_2 = os.path.join(graph_path, "2week_edge.json")
-    fpath_json_node_2 = os.path.join(graph_path, "2week_node.json")
-    with open(fpath_json_edge_2, 'w') as outfile:
-        json.dump(dictionary, outfile)
-    with open(fpath_json_node_2, 'w') as outfile:
-        json.dump(nodes_2week, outfile)
-    file_path_pickle_2 = os.path.join(graph_path, "2week.pickle")
-    pickle.dump(H, open(file_path_pickle_2, 'wb'))
-    # nx.write_gexf(H, os.path.join(graph_path, "2week.gexf"))
 
 
 if __name__ == "__main__":
