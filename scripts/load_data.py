@@ -31,6 +31,8 @@ from schedulebot.utils.load import (
     get_time_intervals,
     graph_edge_1week,
     graph_edge_2week,
+    graph_nodes_1week,
+    graph_nodes_2week,
     room_types,
     weekdays,
 )
@@ -182,9 +184,11 @@ def main(version: str):
     G = filling_the_graph(dictionary, G)
     # gen_alg = GraphColoringProblem(G, 10)
     graph_path = os.path.join(DATA_DPATH, "graph")
+    nodes_1week = graph_nodes_1week()
     file_path_json_1 = os.path.join(graph_path, "1week.json")
     with open(file_path_json_1, 'w') as outfile:
         json.dump(dictionary, outfile)
+        json.dump(nodes_1week, outfile)
     file_path_pickle_1 = os.path.join(graph_path, "1week.pickle")
     pickle.dump(G, open(file_path_pickle_1, 'wb'))
     # nx.write_gexf(G, file_path_1)
@@ -193,9 +197,11 @@ def main(version: str):
     dictionary = graph_edge_2week()
     H = nx.Graph()
     H = filling_the_graph(dictionary, H)
+    nodes_2week = graph_nodes_2week()
     file_path_json_2 = os.path.join(graph_path, "2week.json")
     with open(file_path_json_2, 'w') as outfile:
         json.dump(dictionary, outfile)
+        json.dump(nodes_2week, outfile)
     file_path_pickle_2 = os.path.join(graph_path, "2week.pickle")
     pickle.dump(H, open(file_path_pickle_2, 'wb'))
     # nx.write_gexf(H, os.path.join(graph_path, "2week.gexf"))
