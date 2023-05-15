@@ -1,7 +1,8 @@
+import json
 import logging
 import os
+import pickle
 
-#  import json
 import click
 import networkx as nx
 import pandas as pd
@@ -21,6 +22,8 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
+
+# from schedulebot.genetic.graphs import GraphColoringProblem
 from schedulebot.utils.load import (
     eng_room_type,
     filling_the_graph,
@@ -177,17 +180,25 @@ def main(version: str):
     dictionary = graph_edge_1week()
     G = nx.Graph()
     G = filling_the_graph(dictionary, G)
-    file_path_1 = os.path.join(DATA_DPATH, "1week.gexf")
-    nx.write_gexf(G, file_path_1)
+    # gen_alg = GraphColoringProblem(G, 10)
+    graph_path = os.path.join(DATA_DPATH, "graph")
+    file_path_json_1 = os.path.join(graph_path, "1week.json")
+    with open(file_path_json_1, 'w') as outfile:
+        json.dump(dictionary, outfile)
+    file_path_pickle_1 = os.path.join(graph_path, "1week.pickle")
+    pickle.dump(G, open(file_path_pickle_1, 'wb'))
+    # nx.write_gexf(G, file_path_1)
 
     # --- Graph for 2 week --- #
     dictionary = graph_edge_2week()
     H = nx.Graph()
     H = filling_the_graph(dictionary, H)
-    nx.write_gexf(H, os.path.join(DATA_DPATH, "2week.gexf"))
-
-    """with open('data.txt', 'w') as outfile:
-        json.dump(data, outfile)"""
+    file_path_json_2 = os.path.join(graph_path, "2week.json")
+    with open(file_path_json_2, 'w') as outfile:
+        json.dump(dictionary, outfile)
+    file_path_pickle_2 = os.path.join(graph_path, "2week.pickle")
+    pickle.dump(H, open(file_path_pickle_2, 'wb'))
+    # nx.write_gexf(H, os.path.join(graph_path, "2week.gexf"))
 
 
 if __name__ == "__main__":
