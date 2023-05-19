@@ -19,10 +19,10 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 
-@dp.message_handler(commands=['support', 'help'])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
 
-    """This handler will be called when user sends `/support` or `/help` command"""
+    """This handler will be called when user sends `/start` command"""
 
     await message.reply("Привет!\nЯ schedulebot!\nИ я очень люблю генерировать расписание!")
 
