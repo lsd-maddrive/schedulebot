@@ -280,3 +280,9 @@ def filling_the_graph(dictionary, G):
         for y in dictionary[x]:
             G.add_edge(x, y)
     return G
+
+
+def remake_str(subject_info):
+    subject_info = subject_info.split(", ")
+    string = subject_info[0] + ', ' + subject_info[1] + ', ' + subject_info[2]
+    return string
