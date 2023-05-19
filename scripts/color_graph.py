@@ -11,7 +11,12 @@ from deap import base, creator, tools
 
 from schedulebot.genetic import elitism, graphs
 from schedulebot.utils.fs import load_graph, read_yaml
-from schedulebot.utils.load import get_time_intervals, graph_nodes_1week, remake_str, weekdays
+from schedulebot.utils.load import (  # graph_nodes_1week,
+    get_time_intervals,
+    graph_nodes_2week,
+    remake_str,
+    weekdays,
+)
 
 CURRENT_DPATH = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DPATH, os.pardir))
@@ -34,8 +39,10 @@ def main():
     logger.info(f"Config: {config_constant}")
 
     graph_dpath = os.path.join(DATA_DPATH, "graph")
-    week1_pickle = os.path.join(graph_dpath, "1week.pickle")
-    G = load_graph(week1_pickle)
+    # week1_pickle = os.path.join(graph_dpath, "1week.pickle")
+    # G = load_graph(week1_pickle)                              for 1 week
+    week2_pickle = os.path.join(graph_dpath, "2week.pickle")
+    H = load_graph(week2_pickle)
 
     # set the random seed:
     random.seed(config_constant['RANDOM_SEED'])
@@ -43,7 +50,7 @@ def main():
     toolbox = base.Toolbox()
 
     # create the graph coloring problem instance to be used:
-    gcp = graphs.GraphColoringProblem(G, config_constant['HARD_CONSTRAINT_PENALTY'])
+    gcp = graphs.GraphColoringProblem(H, config_constant['HARD_CONSTRAINT_PENALTY'])
 
     # define a single objective, maximizing fitness strategy:
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -119,31 +126,31 @@ def main():
     minFitnessValues, meanFitnessValues = logbook.select("min", "avg")
 
     weekday = weekdays()
-    color_dicrionary = {}
-    index = 1
+    color_dictionary = {}
+    index = 0
     for day in weekday:
         for time_slot in get_time_intervals():
-            color_dicrionary[index] = day + ' ' + time_slot
+            color_dictionary[index] = day + ' ' + time_slot
             index += 1
 
-    nodes = graph_nodes_1week()
+    nodes = graph_nodes_2week()
     time_dict = {}
     index = 1
     for color in best:
         study_info = nodes[index]
-        if color_dicrionary[color] in time_dict:
-            time_dict[color_dicrionary[color]].append(study_info)
+        if color_dictionary[color] in time_dict:
+            time_dict[color_dictionary[color]].append(study_info)
         else:
-            time_dict[color_dicrionary[color]] = [study_info]
+            time_dict[color_dictionary[color]] = [study_info]
         index += 1
-    # print(time_dict, sep='\n')
 
     group_dict = {'9491': [],
                   '9492': [],
                   '9493': [],
                   '9494': []}
+    window_count = 0
 
-    for value in list(color_dicrionary.values()):
+    for value in list(color_dictionary.values()):
         group_window = ['9491', '9492', '9493', '9494']
         if value in time_dict:
             for subject_info in time_dict[value]:
@@ -153,9 +160,14 @@ def main():
                         group_window.remove(group)
         for group in group_window:
             group_dict[group].append('-')
+            window_count += 1
 
-    schedule = pd.DataFrame(data=group_dict, index=list(color_dicrionary.values()))
-    print(schedule)
+    schedule = pd.DataFrame(data=group_dict, index=list(color_dictionary.values()))
+    print(schedule['9491'])
+    print(schedule['9492'])
+    print(schedule['9493'])
+    print(schedule['9494'])
+    print(window_count)
 
     # plot statistics:
     plt.figure(2)
