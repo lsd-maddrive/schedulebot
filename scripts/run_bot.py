@@ -27,6 +27,14 @@ async def send_welcome(message: types.Message):
     await message.reply("Привет!\nЯ schedulebot!\nИ я очень люблю генерировать расписание!")
 
 
+@dp.message_handler(commands=['help'])
+async def send_command_list(message: types.Message):
+
+    """This handler will be called when user sends `/help` command"""
+
+    await message.reply("Вот список моих команд:\n/start\n/help\n/support")
+
+
 if __name__ == '__main__':
 
     executor.start_polling(dp, skip_updates=True)
