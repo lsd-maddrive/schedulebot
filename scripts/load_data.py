@@ -19,6 +19,8 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
+
+# from schedulebot.genetic.graphs import GraphColoringProblem
 from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
 
 logging.basicConfig(level=logging.INFO)
