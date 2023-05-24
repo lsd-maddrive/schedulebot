@@ -34,7 +34,7 @@ def main():
         json.dump(nodes_1week, outfile, ensure_ascii=False)
     file_path_pickle_1 = os.path.join(graph_path, "1week.pickle")
     pickle.dump(G, open(file_path_pickle_1, 'wb'))
-    # nx.write_gexf(G, file_path_1)
+    nx.write_gexf(G, os.path.join(graph_path, "1week.gexf"))
 
     # --- Graph for 2 week --- #
     dictionary = graph_edge_2week()
@@ -49,7 +49,7 @@ def main():
         json.dump(nodes_2week, outfile, ensure_ascii=False)
     file_path_pickle_2 = os.path.join(graph_path, "2week.pickle")
     pickle.dump(H, open(file_path_pickle_2, 'wb'))
-    # nx.write_gexf(H, os.path.join(graph_path, "2week.gexf"))
+    nx.write_gexf(H, os.path.join(graph_path, "2week.gexf"))
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ from time import time
 import matplotlib.pyplot as plt
 import numpy
 import pandas as pd
+import seaborn as sns
 from deap import base, creator, tools
 
 from schedulebot.genetic import elitism, graphs
@@ -160,7 +161,7 @@ def main(graph, nodes):
     schedule = pd.DataFrame(data=group_dict, index=list(color_dictionary.values()))
 
     # plot statistics:
-    """plt.figure(2)
+    plt.figure(2)
     sns.set_style("whitegrid")
     plt.plot(minFitnessValues, color='red')
     plt.plot(meanFitnessValues, color='green')
@@ -168,7 +169,7 @@ def main(graph, nodes):
     plt.ylabel('Min / Average Fitness')
     plt.title('Min and Average fitness over Generations')
 
-    plt.show()"""
+    plt.show()
     return schedule
 
 
