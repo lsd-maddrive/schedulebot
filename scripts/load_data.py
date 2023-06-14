@@ -21,7 +21,7 @@ from schedulebot.db.models import (
 )
 
 # from schedulebot.genetic.graphs import GraphColoringProblem
-from schedulebot.utils.load import eng_room_type, get_days, get_groups, get_time_intervals, room_types
+from schedulebot.utils.load import get_days, get_groups, get_time_intervals, room_type_map, room_types
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -105,11 +105,11 @@ def main(version: str):
     # --- Room --- #
     fpath_room = os.path.join(src_dpath, "Room+Subject_Type.csv")
     room_df = pd.read_csv(fpath_room, index_col=0)
-    room_type_map = eng_room_type()
+    room_types_map = room_type_map()
     for room, subject_type in zip(room_df['room'], room_df['subject_type']):
         building, floor = room[:2]
         number = room[2:]
-        subject_type = room_type_map[subject_type]
+        subject_type = room_types_map[subject_type]
         type_id = db_client.get_id(RoomType, [RoomType.name.like(subject_type)])
         record = Room(name=room,
                       building=building,
@@ -136,7 +136,7 @@ def main(version: str):
         subject_id = db_client.get_id(Subject, conditions=[Subject.name.like(subject_type)])
         subject_type = subject_type.split()[-1]
         if subject_type != 'лаб.':
-            room_type = room_type_map[subject_type]
+            room_type = room_types_map[subject_type]
             type_id = db_client.get_id(RoomType, [RoomType.name.like(room_type)])
             rooms_id = db_client.get_filter_ids(Room, conditions=[Room.type_id.like(type_id)])
             for room_id in rooms_id:
