@@ -5,21 +5,23 @@ from itertools import product
 from pathlib import Path
 from time import time
 
+import hydra
 import numpy
 import pandas as pd
 from deap import base, creator, tools
+from hydra.core.config_store import ConfigStore
+from omegaconf import OmegaConf
 
+from schedulebot.config import GeneticConfig
 from schedulebot.genetic import elitism, graphs
 from schedulebot.utils.date_generation import get_date_string
-from schedulebot.utils.fs import load_graph, read_json, read_yaml
+from schedulebot.utils.fs import load_graph, read_json
 from schedulebot.utils.load import get_days, get_groups, get_time_intervals
 from schedulebot.utils.viz import plot_fitness
 
 CURRENT_DPATH = Path(__file__).parent.resolve()
 PROJECT_DPATH = CURRENT_DPATH.parent
-DATA_DPATH = PROJECT_DPATH / "data"
 CONFIG_DPATH = PROJECT_DPATH / "configs"
-GRAPH_DPATH = DATA_DPATH / "graph"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,15 +30,17 @@ logging.basicConfig(
 logger = logging.getLogger(__file__)
 
 ScheduleSolution = namedtuple("ScheduleSolution", field_names=["gcp", "best_individual", "logbook"])
+cfg_store = ConfigStore.instance()
+cfg_store.store(name="genetic_config", node=GeneticConfig)
 
 
-def generate_schedule(graph, config: dict) -> ScheduleSolution:
+def generate_schedule(graph, config: GeneticConfig) -> ScheduleSolution:
     toolbox = base.Toolbox()
 
-    max_colors = config["max_colors"] - 1
+    max_colors = config.params.max_colors - 1
 
     # create the graph coloring problem instance to be used
-    gcp = graphs.GraphColoringProblem(graph, config["hard_constraint_penalty"])
+    gcp = graphs.GraphColoringProblem(graph, config.params.hard_constraint_penalty)
 
     # define a single objective, minimizing fitness strategy
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -74,7 +78,7 @@ def generate_schedule(graph, config: dict) -> ScheduleSolution:
     )
 
     # create initial population (generation 0):
-    population = toolbox.populationCreator(n=config["population_size"])
+    population = toolbox.populationCreator(n=config.params.population_size)
 
     # prepare the statistics object:
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -82,16 +86,16 @@ def generate_schedule(graph, config: dict) -> ScheduleSolution:
     stats.register("avg", numpy.mean)
 
     # define the hall-of-fame object:
-    hof = tools.HallOfFame(config["hall_of_fame_size"])
+    hof = tools.HallOfFame(config.params.hall_of_fame_size)
 
     start_ts = time()
     # perform the Genetic Algorithm flow with elitism:
     population, logbook = elitism.eaSimpleWithElitism(
         population,
         toolbox,
-        cxpb=config["p_crossover"],
-        mutpb=config["p_mutation"],
-        ngen=config["max_generations"],
+        cxpb=config.params.p_crossover,
+        mutpb=config.params.p_mutation,
+        ngen=config.params.max_generations,
         stats=stats,
         halloffame=hof,
         verbose=True
@@ -147,23 +151,23 @@ def convert_to_dataframe(best_individual, nodes) -> pd.DataFrame:
     return schedule_df
 
 
-def main():
-    # --- Configuration --- #
-    config_fpath = CONFIG_DPATH / "color_graph.yaml"
-    config = read_yaml(config_fpath)
+@hydra.main(config_name="color_graph", config_path=str(CONFIG_DPATH), version_base=None)
+def main(config: GeneticConfig):
+    OmegaConf.register_new_resolver("date_now", get_date_string)
+    random.seed(config.params.random_seed)
 
-    random.seed(config["random_seed"])
+    graph_dpath = Path(config.paths.graph_dpath)
 
     # --- Caching directory --- #
-    save_dpath = DATA_DPATH / f"timetable_{get_date_string()}"
+    save_dpath = Path(config.paths.output_dpath)
     save_dpath.mkdir(parents=True, exist_ok=True)
 
     # --- Odd week schedule --- #
-    graph_odd_week_fpath = GRAPH_DPATH / "1week.pickle"
-    nodes_odd_week_fpath = GRAPH_DPATH / "1week_node.json"
+    odd_graph_fpath = graph_dpath / config.files.odd_graph
+    odd_graph = load_graph(odd_graph_fpath)
 
-    odd_graph = load_graph(graph_odd_week_fpath)
-    odd_nodes = read_json(nodes_odd_week_fpath)
+    odd_nodes_fpath = graph_dpath / config.files.odd_graph_nodes
+    odd_nodes = read_json(odd_nodes_fpath)
 
     odd_schedule_solution = generate_schedule(odd_graph, config)
     odd_schedule_df = convert_to_dataframe(odd_schedule_solution.best_individual, odd_nodes)
@@ -183,11 +187,11 @@ def main():
     odd_fitness_fig.savefig(odd_fitness_fpath)
 
     # --- Even week schedule --- #
-    graph_even_week_fpath = GRAPH_DPATH / "2week.pickle"
-    nodes_even_week_fpath = GRAPH_DPATH / "2week_node.json"
+    even_graph_fpath = graph_dpath / config.files.even_graph
+    even_graph = load_graph(even_graph_fpath)
 
-    even_graph = load_graph(graph_even_week_fpath)
-    even_nodes = read_json(nodes_even_week_fpath)
+    even_nodes_fpath = graph_dpath / config.files.even_graph_nodes
+    even_nodes = read_json(even_nodes_fpath)
 
     even_schedule_solution = generate_schedule(even_graph, config)
 
@@ -205,7 +209,7 @@ def main():
     even_fitness_fpath = save_dpath / "even_fitness.jpg"
     even_fitness_fig.savefig(even_fitness_fpath)
 
-    # --- Schedule dataframe saving --- #
+    # --- Schedule data frames saving --- #
     even_schedule_df = convert_to_dataframe(even_schedule_solution.best_individual, even_nodes)
 
     schedule_fpath = save_dpath / f"schedule_{get_date_string()}.xlsx"
