@@ -21,7 +21,7 @@ from schedulebot.db.models import (
 )
 
 # from schedulebot.genetic.graphs import GraphColoringProblem
-from schedulebot.utils.load import eng_room_type, get_groups, get_time_intervals, room_types, weekdays
+from schedulebot.utils.load import eng_room_type, get_days, get_groups, get_time_intervals, room_types
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
@@ -46,7 +46,7 @@ def main(version: str):
     db_client.add_df(df=qualification_df, table_name=Qualification.__tablename__)
 
     # --- Days --- #
-    weekdays_ds = pd.Series(weekdays(), name="name")
+    weekdays_ds = pd.Series(get_days(), name="name")
     db_client.add_df(df=weekdays_ds, table_name=Weekdays.__tablename__)
 
     # --- Time interval --- #

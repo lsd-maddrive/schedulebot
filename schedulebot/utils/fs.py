@@ -1,15 +1,30 @@
-import pickle
+from typing import Union
 
+import json
+import pickle
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import yaml
 
 
-def read_yaml(fpath: str) -> dict:
+def read_yaml(fpath: Union[str, Path]) -> dict:
     with open(fpath) as fp:
         data = yaml.safe_load(fp)
     return data
 
 
-def load_graph(fpath: str):
+def read_json(fpath: Union[str, Path]) -> dict:
+    with open(fpath) as fp:
+        data = json.load(fp)
+    return data
+
+
+def load_graph(fpath: Union[str, Path]):
     with open(fpath, 'rb') as f:
         graph_obj = pickle.load(f)
     return graph_obj
+
+
+def save_figure(figure, fpath: Union[str, Path]):
+    plt.savefig(fpath)
