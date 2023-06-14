@@ -151,6 +151,21 @@ def convert_to_dataframe(best_individual, nodes) -> pd.DataFrame:
     return schedule_df
 
 
+def save_artifacts(save_dpath: Path, schedule_solution: ScheduleSolution, prefix: str):
+    odd_graph_fig = schedule_solution.gcp.get_color_graph(
+        schedule_solution.best_individual, figsize=(10, 10)
+    )
+    color_odd_graph_fpath = save_dpath / f"{prefix}_color_graph.jpg"
+    odd_graph_fig.savefig(color_odd_graph_fpath)
+
+    odd_fitness_fig = plot_fitness(
+        schedule_solution.logbook.select("min"),
+        schedule_solution.logbook.select("avg"),
+    )
+    odd_fitness_fpath = save_dpath / f"{prefix}_fitness.jpg"
+    odd_fitness_fig.savefig(odd_fitness_fpath)
+
+
 @hydra.main(config_name="color_graph", config_path=str(CONFIG_DPATH), version_base=None)
 def main(config: GeneticConfig):
     OmegaConf.register_new_resolver("date_now", get_date_string)
@@ -162,7 +177,7 @@ def main(config: GeneticConfig):
     save_dpath = Path(config.paths.output_dpath)
     save_dpath.mkdir(parents=True, exist_ok=True)
 
-    # --- Odd week schedule --- #
+    # --- Odd week processing --- #
     odd_graph_fpath = graph_dpath / config.files.odd_graph
     odd_graph = load_graph(odd_graph_fpath)
 
@@ -171,22 +186,13 @@ def main(config: GeneticConfig):
 
     odd_schedule_solution = generate_schedule(odd_graph, config)
     odd_schedule_df = convert_to_dataframe(odd_schedule_solution.best_individual, odd_nodes)
-
-    # --- Odd artifacts caching --- #
-    odd_graph_fig = odd_schedule_solution.gcp.get_color_graph(
-        odd_schedule_solution.best_individual, figsize=(10, 10)
+    save_artifacts(
+        save_dpath=save_dpath,
+        schedule_solution=odd_schedule_solution,
+        prefix="odd"
     )
-    color_odd_graph_fpath = save_dpath / "odd_color_graph.jpg"
-    odd_graph_fig.savefig(color_odd_graph_fpath)
 
-    odd_fitness_fig = plot_fitness(
-        odd_schedule_solution.logbook.select("min"),
-        odd_schedule_solution.logbook.select("avg"),
-    )
-    odd_fitness_fpath = save_dpath / "odd_fitness.jpg"
-    odd_fitness_fig.savefig(odd_fitness_fpath)
-
-    # --- Even week schedule --- #
+    # --- Even week processing --- #
     even_graph_fpath = graph_dpath / config.files.even_graph
     even_graph = load_graph(even_graph_fpath)
 
@@ -194,24 +200,14 @@ def main(config: GeneticConfig):
     even_nodes = read_json(even_nodes_fpath)
 
     even_schedule_solution = generate_schedule(even_graph, config)
-
-    # --- Even artifacts caching --- #
-    even_fig = even_schedule_solution.gcp.get_color_graph(
-        even_schedule_solution.best_individual, figsize=(10, 10)
-    )
-    color_even_graph_fpath = save_dpath / "even_color_graph.jpg"
-    even_fig.savefig(color_even_graph_fpath)
-
-    even_fitness_fig = plot_fitness(
-        even_schedule_solution.logbook.select("min"),
-        even_schedule_solution.logbook.select("avg"),
-    )
-    even_fitness_fpath = save_dpath / "even_fitness.jpg"
-    even_fitness_fig.savefig(even_fitness_fpath)
-
-    # --- Schedule data frames saving --- #
     even_schedule_df = convert_to_dataframe(even_schedule_solution.best_individual, even_nodes)
+    save_artifacts(
+        save_dpath=save_dpath,
+        schedule_solution=even_schedule_solution,
+        prefix="even"
+    )
 
+    # --- Schedule data frames caching --- #
     schedule_fpath = save_dpath / f"schedule_{get_date_string()}.xlsx"
     with pd.ExcelWriter(schedule_fpath) as writer:
         odd_schedule_df.to_excel(writer, sheet_name="Нечётная неделя", index=False)
