@@ -2,9 +2,6 @@ params:
   random_seed:  42
   # the penalty factor for a hard-constraint violation
   hard_constraint_penalty: 10
-
-  # Genetic Algorithm constants:
-  max_colors: 24
   population_size: 200
   hall_of_fame_size: 5
   # probability for crossover
@@ -12,6 +9,7 @@ params:
   # probability for mutating an individual
   p_mutation: 0.1
   max_generations: 100
+  max_colors: 24
 
 paths:
   data_dpath: ${hydra:runtime.cwd}/data

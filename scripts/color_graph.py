@@ -41,21 +41,16 @@ def generate_schedule(graph, config: GeneticConfig) -> ScheduleSolution:
 
     # create the graph coloring problem instance to be used
     gcp = graphs.GraphColoringProblem(graph, config.params.hard_constraint_penalty)
-
     # define a single objective, minimizing fitness strategy
     creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-
     # create the Individual class based on list:
     creator.create("Individual", list, fitness=creator.FitnessMin)
-
     # create an operator that randomly returns an integer in the range of participating colors
     toolbox.register("Integers", random.randint, 0, max_colors)
-
     # create the individual operator to fill up an Individual instance
     toolbox.register(
         "individualCreator", tools.initRepeat, creator.Individual, toolbox.Integers, len(gcp)
     )
-
     # create the population operator to generate a list of individuals:
     toolbox.register("populationCreator", tools.initRepeat, list, toolbox.individualCreator)
 

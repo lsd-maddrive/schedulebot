@@ -4,7 +4,6 @@ import json
 import pickle
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import yaml
 
 
@@ -24,7 +23,3 @@ def load_graph(fpath: Union[str, Path]):
     with open(fpath, 'rb') as f:
         graph_obj = pickle.load(f)
     return graph_obj
-
-
-def save_figure(figure, fpath: Union[str, Path]):
-    plt.savefig(fpath)

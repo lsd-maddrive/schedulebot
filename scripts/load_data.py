@@ -19,9 +19,13 @@ from schedulebot.db.models import (
     TimeInterval,
     Weekdays,
 )
-
-# from schedulebot.genetic.graphs import GraphColoringProblem
-from schedulebot.utils.load import get_days, get_groups, get_time_intervals, room_type_map, room_types
+from schedulebot.utils.load import (
+    get_days,
+    get_groups,
+    get_time_intervals,
+    room_type_map,
+    room_types,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("database_loading")
