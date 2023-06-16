@@ -15,7 +15,6 @@ CONFIG_DPATH = os.path.join(PROJECT_ROOT, "configs")
 schedule_path = os.path.join(DATA_DPATH, 'timetable')
 xlsx_path = os.path.join(schedule_path, 'schedule.xlsx')
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 
 

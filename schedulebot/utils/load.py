@@ -16,7 +16,7 @@ def get_time_intervals() -> List[str]:
     ]
 
 
-def get_groups() -> List[str]:
+def get_groups() -> List[int]:
     return [9491, 9492, 9493, 9494]
 
 
@@ -24,7 +24,7 @@ def room_types() -> List[str]:
     return ["lecture", "lab", "practice", "mixed"]
 
 
-def room_type_map() -> dict:
+def room_type_map() -> dict[str, str]:
     return {
         "пр.": "practice",
         "лек.": "lecture",

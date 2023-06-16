@@ -10,8 +10,8 @@ class Qualification(Model):
 
     __tablename__ = "qualification"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(30), nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[str] = Column(String(30), nullable=False)
 
     def __repr__(self):
         return(f"<Qualification(id={self.id}, name={self.name})>")
@@ -22,8 +22,8 @@ class Weekdays(Model):
 
     __tablename__ = "weekday"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(30), nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[str] = Column(String(30), nullable=False)
 
 
 class TimeInterval(Model):
@@ -31,8 +31,8 @@ class TimeInterval(Model):
 
     __tablename__ = "time_interval"
 
-    id = Column(Integer, primary_key=True)
-    interval = Column(String(30), nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    interval: Column[str] = Column(String(30), nullable=False)
 
 
 class StudyInterval(Model):
@@ -40,9 +40,9 @@ class StudyInterval(Model):
 
     __tablename__ = "study_interval"
 
-    id = Column(Integer, primary_key=True)
-    time_interval_id = Column(ForeignKey('time_interval.id'))
-    day_id = Column(ForeignKey('weekday.id'))
+    id: Column[int] = Column(Integer, primary_key=True)
+    time_interval_id: Column[int] = Column(ForeignKey('time_interval.id'))
+    day_id: Column[int] = Column(ForeignKey('weekday.id'))
 
 
 class Teacher(Model):
@@ -50,12 +50,12 @@ class Teacher(Model):
 
     __tablename__ = "teachers"
 
-    id = Column(Integer, primary_key=True)
-    middle_name = Column(String(30), nullable=False)
-    first_name = Column(String(30), nullable=False)
-    last_name = Column(String(30), nullable=False)
-    load_hours = Column(Float, nullable=False)
-    qualification_id = Column(ForeignKey('qualification.id'))
+    id: Column[int] = Column(Integer, primary_key=True)
+    middle_name: Column[str] = Column(String(30), nullable=False)
+    first_name: Column[str] = Column(String(30), nullable=False)
+    last_name: Column[str] = Column(String(30), nullable=False)
+    load_hours: Column[float] = Column(Float, nullable=False)
+    qualification_id: Column[int] = Column(ForeignKey('qualification.id'))
 
 
 class Subject(Model):
@@ -63,8 +63,8 @@ class Subject(Model):
 
     __tablename__ = "subjects"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(30), nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[str] = Column(String(30), nullable=False)
 
 
 class TeacherSubject(Model):
@@ -72,9 +72,9 @@ class TeacherSubject(Model):
 
     __tablename__ = "teachers_subjects"
 
-    id = Column(Integer, primary_key=True)
-    teacher_id = Column(ForeignKey("teachers.id"))
-    subject_id = Column(ForeignKey("subjects.id"))
+    id: Column[int] = Column(Integer, primary_key=True)
+    teacher_id: Column[int] = Column(ForeignKey("teachers.id"))
+    subject_id: Column[int] = Column(ForeignKey("subjects.id"))
 
 
 class RoomType(Model):
@@ -82,8 +82,8 @@ class RoomType(Model):
 
     __tablename__ = "room_type"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(30), nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[str] = Column(String(30), nullable=False)
 
 
 class Room(Model):
@@ -91,12 +91,12 @@ class Room(Model):
 
     __tablename__ = "room"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    building = Column(String, nullable=False)
-    floor = Column(Integer, nullable=False)
-    number = Column(String, nullable=False)
-    type_id = Column(ForeignKey("room_type.id"))
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[str] = Column(String, nullable=False)
+    building: Column[str] = Column(String, nullable=False)
+    floor: Column[int] = Column(Integer, nullable=False)
+    number: Column[str] = Column(String, nullable=False)
+    type_id: Column[int] = Column(ForeignKey("room_type.id"))
 
 
 class SubjectRoom(Model):
@@ -104,9 +104,9 @@ class SubjectRoom(Model):
 
     __tablename__ = "subject_room"
 
-    id = Column(Integer, primary_key=True)
-    subject_id = Column(ForeignKey('subjects.id'))
-    room_id = Column(ForeignKey('room.id'))
+    id: Column[int] = Column(Integer, primary_key=True)
+    subject_id: Column[int] = Column(ForeignKey('subjects.id'))
+    room_id: Column[int] = Column(ForeignKey('room.id'))
 
 
 class Group(Model):
@@ -114,8 +114,8 @@ class Group(Model):
 
     __tablename__ = 'group'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(Integer, nullable=False)
+    id: Column[int] = Column(Integer, primary_key=True)
+    name: Column[int] = Column(Integer, nullable=False)
 
 
 class GroupSubject(Model):
@@ -123,6 +123,6 @@ class GroupSubject(Model):
 
     __tablename__ = 'group_subject'
 
-    id = Column(Integer, primary_key=True)
-    group_id = Column(ForeignKey('group.id'))
-    subject_id = Column(ForeignKey('subjects.id'))
+    id: Column[int] = Column(Integer, primary_key=True)
+    group_id: Column[int] = Column(ForeignKey('group.id'))
+    subject_id: Column[int] = Column(ForeignKey('subjects.id'))
