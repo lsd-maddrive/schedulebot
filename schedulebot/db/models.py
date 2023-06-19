@@ -56,6 +56,7 @@ class Teacher(Model):
     last_name: Column[str] = Column(String(30), nullable=False)
     load_hours: Column[float] = Column(Float, nullable=False)
     qualification_id: Column[int] = Column(ForeignKey('qualification.id'))
+    # TODO: add department name (-> add department table)
 
 
 class Subject(Model):
