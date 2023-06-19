@@ -18,6 +18,7 @@ class Files:
 
 @dataclass
 class Params:
+    random_seed: int
     hard_constraint_penalty: float
     max_colors: int
     population_size: int
