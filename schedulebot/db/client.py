@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Protocol
 
 import logging
 import os
@@ -11,6 +11,10 @@ from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
 from schedulebot.db.models import metadata
+
+
+class Table(Protocol):
+    pass
 
 
 class DatabaseClient:
@@ -42,7 +46,7 @@ class DatabaseClient:
         with self._engine.begin() as connection:
             df.to_sql(name=table_name, con=connection, if_exists=if_exist, index=False)
 
-    def get_id_list(self, table) -> List[int]:
+    def get_id_list(self, table: Table) -> List[int]:
         """Get list of unique ID values from the specified table."""
 
         with self._session() as session:
@@ -56,14 +60,14 @@ class DatabaseClient:
             session.add(record)
             session.commit()
 
-    def get_id(self, table, conditions: list):
+    def get_id(self, table: Table, conditions: list):
         """Get record ID."""
 
         with self._session() as session:
             record = session.query(table).filter(and_(*conditions))[0]
         return record.id
 
-    def get_filter_ids(self, table, conditions: list):
+    def get_filter_ids(self, table: Table, conditions: list):
         # TODO: unify get_id and get_filter_ids
         with self._session() as session:
             record = session.query(table).filter(and_(*conditions))

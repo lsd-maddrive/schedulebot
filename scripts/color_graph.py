@@ -85,7 +85,7 @@ def generate_schedule(graph, config: GeneticConfig) -> ScheduleSolution:
 
     start_ts = time()
     # perform the Genetic Algorithm flow with elitism:
-    population, logbook = elitism.eaSimpleWithElitism(
+    population, logbook = elitism.ea_simple_with_elitism(
         population,
         toolbox,
         cxpb=config.params.p_crossover,
